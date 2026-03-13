@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>食品官能品評問卷調查</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* (這裡的 CSS 與上一版完全相同) */
+        body { font-family: 'Noto Sans TC', sans-serif; line-height: 1.6; color: #333; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); margin: 0; padding: 40px 20px; min-height: 100vh; }
+        form { background: #ffffff; max-width: 700px; margin: 0 auto; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        h2 { text-align: center; color: #2c3e50; font-size: 28px; margin-top: 0; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 15px; }
+        fieldset { border: none; background-color: #fcfcfc; padding: 25px; margin-bottom: 25px; border-radius: 8px; box-shadow: inset 0 0 0 1px #eee; }
+        legend { font-weight: 700; color: #fff; background-color: #3498db; padding: 6px 15px; border-radius: 20px; font-size: 14px; letter-spacing: 1px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group:last-child { margin-bottom: 0; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; color: #444; }
+        input[type="text"], input[type="email"], input[type="number"], input[type="date"], input[type="time"], select, textarea { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 15px; transition: all 0.3s ease; background-color: #fff; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); }
+        textarea { resize: vertical; }
+        input[type="color"] { height: 45px; padding: 2px; cursor: pointer; }
+        input[type="range"] { flex-grow: 1; margin: 0 15px; cursor: pointer; }
+        .inline-group { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 10px 15px; border: 1px solid #dcdde1; border-radius: 6px; }
+        .radio-checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; }
+        .radio-checkbox-group label { display: flex; align-items: center; font-weight: 400; cursor: pointer; margin: 0; }
+        .radio-checkbox-group input { margin-right: 8px; cursor: pointer; width: 18px; height: 18px; accent-color: #3498db; }
+        .button-group { text-align: center; margin-top: 30px; }
+        button[type="submit"], input[type="reset"] { padding: 12px 30px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 700; transition: all 0.3s ease; font-family: inherit; }
+        button[type="submit"] { background-color: #2ecc71; color: white; box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2); }
+        button[type="submit"]:hover { background-color: #27ae60; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3); }
+        input[type="reset"] { background-color: #ecf0f1; color: #7f8c8d; margin-left: 15px; }
+        input[type="reset"]:hover { background-color: #bdc3c7; color: #2c3e50; }
+        
+        /* 新增：即時分數顯示標籤的樣式 */
+        .range-value-display {
+            font-weight: 700;
+            color: #3498db;
+            font-size: 18px;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        @media (max-width: 600px) {
+            form { padding: 20px; }
+            fieldset { padding: 15px; }
+            .inline-group { flex-direction: column; align-items: stretch; gap: 10px; }
+            input[type="range"] { margin: 10px 0; }
+            .button-group button, .button-group input { width: 100%; margin: 10px 0 0 0; }
+            .range-value-display { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <form action="/submit-survey" method="POST">
+        <h2>新產品官能品評測試</h2>
+        <p class="subtitle">請依照您的實際感受填寫以下問卷，這將有助於我們優化產品配方。</p>
+        
+        <fieldset>
+            <legend>01. 基本資料</legend>
+            <div class="form-group">
+                <label for="tester-name">品評員姓名:</label>
+                <input type="text" id="tester-name" name="tester-name" placeholder="請輸入全名" required>
+            </div>
+            <div class="form-group">
+                <label for="tester-email">電子郵件:</label>
+                <input type="email" id="tester-email" name="tester-email" placeholder="example@mail.com">
+            </div>
+            <div class="inline-group" style="border:none; padding:0; gap:15px; background:transparent;">
+                <div class="form-group" style="flex: 1; margin:0;">
+                    <label for="test-date">測試日期:</label>
+                    <input type="date" id="test-date" name="test-date">
+                </div>
+                <div class="form-group" style="flex: 1; margin:0;">
+                    <label for="tester-age">年齡:</label>
+                    <input type="number" id="tester-age" name="tester-age" min="18" max="99" value="25">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>02. 外觀與色澤</legend>
+            <div class="form-group">
+                <label for="sample-color">請選擇您觀察到的產品最接近色標:</label>
+                <input type="color" id="sample-color" name="sample-color" value="#e67e22">
+            </div>
+            <div class="form-group">
+                <label for="visual-appeal">外觀吸引力評分 (1-10分):</label>
+                <div class="inline-group">
+                    <span style="color:#7f8c8d; font-size:14px; white-space:nowrap;">不吸引</span>
+                    <input type="range" id="visual-appeal" name="visual-appeal" min="1" max="10" step="1" value="5">
+                    <span style="color:#7f8c8d; font-size:14px; white-space:nowrap;">非常吸引</span>
+                    <span id="appeal-value" class="range-value-display">5 分</span>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>03. 風味與口感</legend>
+            <div class="form-group">
+                <label>甜度滿意度:</label>
+                <div class="radio-checkbox-group">
+                    <label for="sweet1"><input type="radio" id="sweet1" name="sweetness" value="1"> 太淡</label>
+                    <label for="sweet2"><input type="radio" id="sweet2" name="sweetness" value="2" checked> 適中</label>
+                    <label for="sweet3"><input type="radio" id="sweet3" name="sweetness" value="3"> 太甜</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>感受到的風味層次 (可複選):</label>
+                <div class="radio-checkbox-group">
+                    <label for="flavor1"><input type="checkbox" id="flavor1" name="flavors" value="fruit"> 果香</label>
+                    <label for="flavor2"><input type="checkbox" id="flavor2" name="flavors" value="nut"> 堅果</label>
+                    <label for="flavor3"><input type="checkbox" id="flavor3" name="flavors" value="smoke"> 煙燻</label>
+                    <label for="flavor4"><input type="checkbox" id="flavor4" name="flavors" value="floral"> 花香</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="texture">質地描述:</label>
+                <select id="texture" name="texture">
+                    <option value="" disabled selected>請選擇最符合的質地...</option>
+                    <option value="crispy">酥脆</option>
+                    <option value="soft">鬆軟</option>
+                    <option value="chewy">有嚼勁</option>
+                    <option value="creamy">綿密</option>
+                </select>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>04. 綜合評價與附件</legend>
+            <div class="form-group">
+                <label for="sample-photo">上傳產品實拍照片 (選填):</label>
+                <input type="file" id="sample-photo" name="sample-photo" accept="image/*" style="padding: 9px;">
+            </div>
+            <div class="form-group">
+                <label for="best-time">建議最適合食用的時間:</label>
+                <input type="time" id="best-time" name="best-time" value="15:00">
+            </div>
+            <div class="form-group">
+                <label for="comments">具體改進建議:</label>
+                <textarea id="comments" name="comments" rows="4" placeholder="請描述您的詳細感受或改善建議..."></textarea>
+            </div>
+        </fieldset>
+
+        <div class="button-group">
+            <button type="submit">送出評分報告</button>
+            <input type="reset" value="清除重填" id="reset-btn">
+        </div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // 1. 處理拉桿 (Range Input) 即時顯示分數
+            const rangeInput = document.getElementById('visual-appeal');
+            const rangeDisplay = document.getElementById('appeal-value');
+
+            // 監聽 input 事件，只要拖曳就會即時觸發
+            rangeInput.addEventListener('input', function() {
+                rangeDisplay.textContent = this.value + ' 分';
+            });
+
+            // 2. 自動將「測試日期」預設為今天的日期
+            const dateInput = document.getElementById('test-date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+
+            // 3. 處理「清除重填」按鈕的重置邏輯
+            const resetBtn = document.getElementById('reset-btn');
+            resetBtn.addEventListener('click', function() {
+                // 等待瀏覽器預設的 reset 行為完成後，再把拉桿數字歸位到預設值(5)
+                setTimeout(() => {
+                    rangeDisplay.textContent = rangeInput.value + ' 分';
+                    dateInput.value = today; // 日期保持今天
+                }, 10);
+            });
+        });
+    </script>
+
+</body>
+</html>
