@@ -1,0 +1,12 @@
+{
+  "name": "food-safety-game",
+  "version": "1.0.0",
+  "description": "食品衛生與安全期末衝刺總複習 — 含公開排行榜",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
