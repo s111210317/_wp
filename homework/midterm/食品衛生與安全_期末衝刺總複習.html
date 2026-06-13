@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<title>食品衛生與安全｜期末衝刺總複習</title>
+<style>
+/* ── Palette (easy to remember) ──
+   Dark    #2D2D2D  |  Accent  #8B8B8B
+   Paper   #F5F3EF  |  White   #FFFFFF
+   Border  #E5E2DA  |  Text    #1A1A1A
+   Success #6B8F71  |  Error   #C4877A
+*/
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter','Segoe UI',system-ui,'Noto Sans TC','Microsoft JhengHei',sans-serif;background:#F5F3EF;color:#333;min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:16px}
+
+/* Header */
+.header{background:#fff;border-bottom:1.5px solid #E5E2DA;padding:28px 20px 20px;margin-bottom:20px;text-align:center}
+.header h1{font-size:20px;font-weight:600;letter-spacing:.5px;color:#1A1A1A}
+.header p{font-size:12px;color:#999;margin-top:4px;letter-spacing:.3px}
+
+/* Main menu cards */
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.menu-card{background:#fff;border-radius:10px;padding:14px;cursor:pointer;transition:all .15s;text-align:center;border:1.5px solid #E5E2DA}
+.menu-card:hover{border-color:#2D2D2D}
+.menu-card .icon{font-size:26px;margin-bottom:5px}
+.menu-card .name{font-size:13px;font-weight:600;color:#1A1A1A;margin-bottom:2px}
+.menu-card .desc{font-size:10.5px;color:#aaa}
+.menu-card .status{font-size:10px;margin-top:5px;color:#8B8B8B}
+.menu-card.completed{border-color:#6B8F71}
+.menu-card .badge{display:inline-block;background:#C4877A;color:#fff;font-size:9px;padding:1px 7px;border-radius:8px;margin-left:4px}
+.menu-card.disabled{opacity:.45;cursor:not-allowed}
+
+/* Game screen */
+.game-screen{display:none;background:#fff;border-radius:10px;padding:20px;border:1.5px solid #E5E2DA}
+.game-screen.active{display:block}
+
+/* Progress */
+.progress-bar{background:#E5E2DA;border-radius:8px;height:4px;margin-bottom:16px;overflow:hidden}
+.progress-fill{height:100%;background:#2D2D2D;border-radius:8px;transition:width .4s;width:0}
+.stage-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.stage-title{font-size:15px;font-weight:600;color:#1A1A1A}
+.stage-score{font-size:12px;color:#999}
+
+/* Question */
+.q-topic{display:inline-block;background:#F5F3EF;color:#8B8B8B;font-size:10px;padding:2px 10px;border-radius:8px;margin-bottom:10px;letter-spacing:.3px}
+.q-text{font-size:16px;line-height:1.65;margin-bottom:16px;font-weight:500;color:#1A1A1A}
+.q-note{font-size:13px;color:#555;background:#F5F3EF;padding:12px;border-radius:8px;margin-top:12px;border-left:3px solid #8B8B8B;display:none}
+.q-note.show{display:block}
+
+/* Options */
+.options{display:flex;flex-direction:column;gap:6px}
+.option{background:#FAF9F7;border:1.5px solid #E5E2DA;border-radius:8px;padding:11px 14px;cursor:pointer;transition:all .12s;font-size:14px;color:#333}
+.option:hover{background:#F5F3EF;border-color:#8B8B8B}
+.option.selected{background:#F0EFEC;border-color:#2D2D2D}
+.option.correct{background:#F0F6F0;border-color:#6B8F71}
+.option.wrong{background:#F8F0EF;border-color:#C4877A}
+.option.disabled{pointer-events:none;opacity:.7}
+
+/* Fill blank */
+.blank-input{width:100%;padding:10px 12px;font-size:16px;border:1.5px solid #E5E2DA;border-radius:8px;margin-bottom:12px;text-align:center;transition:border-color .15s}
+.blank-input:focus{outline:none;border-color:#2D2D2D}
+
+/* Buttons */
+.btn-group{display:flex;gap:8px;margin-top:14px}
+.btn{flex:1;padding:10px 16px;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s}
+.btn-primary{background:#2D2D2D;color:#fff}
+.btn-primary:hover{background:#1A1A1A}
+.btn-success{background:#6B8F71;color:#fff}
+.btn-success:hover{background:#5A7A5F}
+.btn-outline{background:#fff;color:#666;border:1.5px solid #E5E2DA}
+.btn-outline:hover{background:#F5F3EF}
+.btn-danger{background:#C4877A;color:#fff}
+.btn-danger:hover{background:#B07266}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-small{padding:7px 12px;font-size:11px;flex:0}
+
+/* Results */
+.result-box{background:#FAF9F7;border-radius:10px;padding:20px;text-align:center;margin-top:20px}
+.result-box .score{font-size:44px;font-weight:600;color:#1A1A1A;letter-spacing:-1px}
+.result-box .score-label{font-size:13px;color:#aaa;margin-bottom:6px}
+.result-stars{font-size:24px;margin:8px 0}
+.result-msg{font-size:13px;color:#666;margin-bottom:14px}
+
+/* Wrong / detail list */
+.wrong-list{margin-top:14px}
+.wrong-item{background:#FAF9F7;border:1.5px solid #E5E2DA;border-radius:8px;padding:12px;margin-bottom:8px;font-size:13px}
+.wrong-item .wi-q{font-weight:500;margin-bottom:4px;color:#1A1A1A}
+.wrong-item .wi-a{color:#6B8F71;font-size:12px}
+.wrong-item .wi-w{color:#C4877A}
+
+/* Flashcard */
+.flashcard{background:#FAF9F7;border-radius:10px;padding:28px 20px;text-align:center;min-height:180px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;transition:all .15s;border:1.5px solid #E5E2DA}
+.flashcard:hover{border-color:#8B8B8B}
+.flashcard .fc-front{font-size:17px;font-weight:500;color:#1A1A1A}
+.flashcard .fc-back{font-size:15px;color:#8B8B8B;display:none;margin-top:12px;padding-top:12px;border-top:1.5px dashed #E5E2DA}
+.flashcard .fc-back.show{display:block}
+.flashcard .fc-hint{font-size:11px;color:#bbb;margin-top:12px}
+
+/* Topic breakdown */
+.topic-breakdown{margin-top:14px;text-align:left}
+.topic-row{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:#FAF9F7;border-radius:6px;margin-bottom:4px;font-size:12px}
+.topic-row .tr-name{font-weight:500;color:#333}
+.topic-row .tr-score{font-size:11px}
+.topic-row .tr-bar{flex:1;height:3px;background:#E5E2DA;border-radius:3px;margin:0 8px}
+.topic-row .tr-fill{height:100%;border-radius:3px;transition:width .5s;background:#2D2D2D}
+.topic-mastered{color:#6B8F71}
+.topic-needs-work{color:#C4877A}
+
+/* Timer */
+.timer{font-size:12px;color:#bbb;text-align:right;margin-bottom:6px}
+
+/* Weakness tag */
+.weakness-tag{display:inline-block;background:#F5F3EF;color:#8B8B8B;font-size:10px;padding:1px 6px;border-radius:6px;margin-left:4px}
+
+/* Review sub-menu */
+.review-sub{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.review-sub-card{background:#FAF9F7;border-radius:8px;padding:12px;cursor:pointer;text-align:center;transition:all .12s;border:1.5px solid #E5E2DA}
+.review-sub-card:hover{border-color:#2D2D2D}
+.review-sub-card .rsc-icon{font-size:22px}
+.review-sub-card .rsc-name{font-size:12px;font-weight:600;margin-top:3px;color:#1A1A1A}
+
+/* Filter tags */
+.filter-tags{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.filter-tag{background:#E5E2DA;padding:3px 10px;border-radius:10px;font-size:10px;cursor:pointer;transition:all .12s;color:#666}
+.filter-tag.active{background:#2D2D2D;color:#fff}
+
+/* Difficulty stars */
+.diff{font-size:11px;color:#C4A07A;margin-bottom:8px}
+
+/* Mobile */
+@media(max-width:480px){
+  .menu-grid{grid-template-columns:1fr 1fr;gap:6px}
+  .menu-card{padding:10px}
+  .header{padding:20px 14px 16px}
+  .game-screen{padding:14px}
+}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .25s ease}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.bounce{animation:bounce .35s}
+
+/* Cheatsheet modal */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.3);z-index:100;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-content{background:#fff;border-radius:10px;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
+.modal-content h2{margin-bottom:12px;font-size:16px;font-weight:600;color:#1A1A1A}
+.modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#aaa}
+.cheat-item{padding:7px 0;border-bottom:1px solid #E5E2DA;font-size:13px;color:#333}
+.cheat-item:last-child{border:none}
+.cheat-item .ci-label{color:#8B8B8B;font-weight:600}
+
+/* Score detail */
+.score-detail{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.score-stat{background:#FAF9F7;padding:12px;border-radius:8px;text-align:center}
+.score-stat .ss-num{font-size:22px;font-weight:600;color:#1A1A1A}
+.score-stat .ss-label{font-size:11px;color:#999}
+
+/* Tabs */
+.tabs{display:flex;gap:0;margin-bottom:14px;background:#F5F3EF;border-radius:8px;overflow:hidden}
+.tab{flex:1;padding:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:500;background:transparent;border:none;transition:all .12s;color:#8B8B8B}
+.tab.active{background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05);border-radius:8px;font-weight:600;color:#1A1A1A}
+
+/* Essay area */
+.essay-prompt{font-size:15px;line-height:1.65;margin:12px 0;padding:12px;background:#FAF9F7;border-left:3px solid #8B8B8B;border-radius:4px;white-space:pre-wrap;color:#1A1A1A}
+.essay-textarea{width:100%;min-height:110px;padding:10px;border:1.5px solid #E5E2DA;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical}
+.essay-textarea:focus{border-color:#2D2D2D;outline:none}
+.essay-hint{font-size:11px;color:#999;font-style:italic;margin:4px 0 8px}
+.essay-answer{display:none;margin:10px 0;padding:12px;background:#F6FAF6;border:1.5px solid #C8DCC8;border-radius:8px;font-size:14px;line-height:1.7;white-space:pre-wrap;color:#333}
+.essay-answer.show{display:block}
+.essay-controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.essay-self{padding:7px 16px;border-radius:20px;border:1.5px solid;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;flex:1;min-width:80px;max-width:140px}
+.essay-self.got{background:#F0F6F0;color:#5B7A5B;border-color:#C8DCC8}
+.essay-self.got:hover{background:#6B8F71;color:#fff;border-color:#6B8F71}
+.essay-self.notyet{background:#F8F0EF;color:#8A5A5A;border-color:#E4C8C8}
+.essay-self.notyet:hover{background:#C4877A;color:#fff;border-color:#C4877A}
+.essay-score{text-align:center;font-size:13px;margin:8px 0;color:#666}
+.essay-submit{font-size:12px;padding:7px 18px;border-radius:18px;border:none;cursor:pointer;background:#2D2D2D;color:#fff;font-weight:500;transition:all .15s}
+.essay-submit:hover{background:#1A1A1A}
+.essay-submit.submitted{background:#E5E2DA;pointer-events:none}
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+<!-- Header -->
+<div class="header">
+  <h1>🍽️ 食品衛生與安全</h1>
+  <p>林偉盛老師｜115學年度第2學期｜期末衝刺總複習</p>
+</div>
+
+<!-- ============== MAIN MENU ============== -->
+<div id="mainMenu" class="game-screen active">
+  <div style="text-align:center;margin-bottom:16px">
+    <div style="font-size:14px;color:#888" id="totalProgress">完成進度：0 / 6 關卡</div>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-card" onclick="startStage(0)" id="menuCard0">
+      <div class="icon">📝</div>
+      <div class="name">第一份模擬卷</div>
+      <div class="desc">傳統題型｜選擇+名詞+計算</div>
+      <div class="status" id="menuStatus0">▶ 開始挑戰</div>
+    </div>
+    <div class="menu-card" onclick="startStage(1)" id="menuCard1">
+      <div class="icon">📋</div>
+      <div class="name">第二份模擬卷</div>
+      <div class="desc">2026新式｜情境整合題</div>
+      <div class="status" id="menuStatus1">▶ 開始挑戰</div>
+    </div>
+    <div class="menu-card" onclick="startStage(2)" id="menuCard2">
+      <div class="icon">⚡</div>
+      <div class="name">衝刺遊戲·題庫</div>
+      <div class="desc">來自衝刺遊戲精選題庫</div>
+      <div class="status" id="menuStatus2">▶ 開始挑戰</div>
+    </div>
+    <div class="menu-card" onclick="startStage(3)" id="menuCard3">
+      <div class="icon">🧠</div>
+      <div class="name">衝刺遊戲·記憶口訣</div>
+      <div class="desc">填空強化數字記憶</div>
+      <div class="status" id="menuStatus3">▶ 開始挑戰</div>
+    </div>
+    <div class="menu-card" onclick="startStage(4)" style="grid-column:1/3" id="menuCard4">
+      <div class="icon">📚</div>
+      <div class="name">總複習關卡</div>
+      <div class="desc">閃卡瀏覽 + 弱點檢測 + 綜合模考</div>
+      <div class="status" id="menuStatus4">▶ 開始挑戰</div>
+    </div>
+    <div class="menu-card" onclick="startStage(5)" style="grid-column:1/3" id="menuCard5">
+      <div class="icon">📖</div>
+      <div class="name">補充題庫·歷屆考題</div>
+      <div class="desc">52題精選補充 + 主題式練習</div>
+      <div class="status" id="menuStatus5">▶ 開始挑戰</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:8px">
+    <button class="btn btn-outline" onclick="startEssayPractice()" style="display:inline-flex;align-items:center;gap:6px;flex:0;padding:10px 20px">
+      ✍️ 手寫題練習
+    </button>
+    <button class="btn btn-outline" onclick="showCheatSheet()" style="display:inline-flex;align-items:center;gap:6px;flex:0;padding:10px 20px">
+      📋 考前速記卡
+    </button>
+    <button class="btn btn-outline" onclick="resetAll()" style="display:inline-flex;align-items:center;gap:6px;flex:0;padding:10px 20px;margin-left:8px;color:#C4877A">
+      🔄 重設進度
+    </button>
+  </div>
+</div>
+
+<!-- ============== GAME SCREEN ============== -->
+<div id="gameScreen" class="game-screen">
+  <div class="timer" id="timerDisplay"></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="stage-header">
+    <div class="stage-title" id="stageTitle">關卡名稱</div>
+    <div class="stage-score" id="stageScore">0 / 0</div>
+  </div>
+
+  <!-- Flashcard mode -->
+  <div id="flashcardArea" style="display:none">
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="fc-front" id="fcFront">點擊翻面</div>
+      <div class="fc-back" id="fcBack">答案</div>
+      <div class="fc-hint">👆 點擊翻面 · 知道按 ✅ · 不知道按 ❌</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn btn-success" onclick="flashcardKnow()">✅ 知道</button>
+      <button class="btn btn-danger" onclick="flashcardDontKnow()">❌ 不知道</button>
+      <button class="btn btn-outline" onclick="endStage()" style="flex:0">結束</button>
+    </div>
+    <div style="text-align:center;margin-top:8px;font-size:12px;color:#888" id="fcProgress">0 / 0</div>
+  </div>
+
+  <!-- Quiz mode -->
+  <div id="quizArea" style="display:none">
+    <div id="filterTags" style="display:none"></div>
+    <div id="qTopic" class="q-topic"></div>
+    <div class="diff" id="qDiff"></div>
+    <div class="q-text" id="qText"></div>
+    <div id="optionsArea" class="options"></div>
+    <div id="blankArea" style="display:none">
+      <input class="blank-input" id="blankInput" placeholder="請輸入答案...">
+    </div>
+    <div class="q-note" id="qNote"></div>
+    <div style="font-size:11px;color:#aaa;margin-top:8px;text-align:center" id="kbdHint">⌨️ 選擇題按 1-4 選項 · Enter 確認 · → 下一題</div>
+    <div class="btn-group" id="actionBtns">
+      <button class="btn btn-primary" id="confirmBtn" onclick="confirmAnswer()">確認答案</button>
+      <button class="btn btn-success" id="nextBtn" onclick="nextQuestion()" style="display:none">下一題 →</button>
+      <button class="btn btn-outline" onclick="endStage()">離開</button>
+    </div>
+  </div>
+
+  <!-- Essay area (hand-writing practice) -->
+  <div id="essayArea" style="display:none">
+    <div id="essayTopic" class="q-topic"></div>
+    <div class="essay-prompt" id="essayPrompt"></div>
+    <div class="essay-hint" id="essayHint"></div>
+    <textarea class="essay-textarea" id="essayTextarea" placeholder="請在此撰寫你的答案..."></textarea>
+    <div class="essay-controls">
+      <button class="essay-submit" id="essayShowBtn" onclick="submitAndShowAnswer()">📖 送出並批改</button>
+    </div>
+    <div class="essay-answer" id="essayAnswer"></div>
+    <div class="essay-controls" id="essaySelfRate" style="display:none">
+      <button class="essay-self got" onclick="essaySelfAssess(true)">✅ 我會了</button>
+      <button class="essay-self notyet" onclick="essaySelfAssess(false)">🔄 需要複習</button>
+    </div>
+    <div class="essay-score" id="essayScore" style="display:none">0 / 0</div>
+    <div class="btn-group" id="essayBtns" style="margin-top:12px">
+      <button class="btn btn-success" id="essayNextBtn" onclick="nextEssay()" style="display:none">下一題 →</button>
+      <button class="btn btn-outline" onclick="endStage()">離開</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="resultArea" style="display:none">
+    <div class="result-box fade-in">
+      <div style="font-size:14px;color:#888;margin-bottom:4px">🏆 關卡完成！</div>
+      <div class="score" id="finalScore">0</div>
+      <div class="score-label">正確 / 總題數</div>
+      <div class="result-stars" id="resultStars">⭐⭐⭐</div>
+      <div class="result-msg" id="resultMsg">繼續加油！</div>
+
+      <div class="score-detail">
+        <div class="score-stat"><div class="ss-num" id="sCorrect">0</div><div class="ss-label">✅ 正確</div></div>
+        <div class="score-stat"><div class="ss-num" id="sWrong">0</div><div class="ss-label">❌ 錯誤</div></div>
+      </div>
+
+      <div class="wrong-list" id="wrongList"></div>
+
+      <div class="topic-breakdown" id="topicBreakdown" style="display:none">
+        <div style="font-size:14px;font-weight:600;margin-bottom:8px">📊 各主題作答表現：</div>
+        <div id="topicContainer"></div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="backToMenu()">🏠 回主選單</button>
+        <button class="btn btn-outline" onclick="retryStage()" style="flex:0">🔄 再挑戰</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== CHEAT SHEET MODAL ============== -->
+<div class="modal" id="cheatModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeCheatSheet()">&times;</button>
+    <h2>📋 考前速記卡</h2>
+    <div id="cheatContent"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ===================================================================
+// DATA — All questions from all sources
+// ===================================================================
+
+// Stage 0: 第一份模擬卷 (from mock exam 1)
+const STAGE0_Q = [
+  {id:"s0q1", topic:"加工危害物質", q:"丙烯醯胺（Acrylamide）主要由下列哪兩種物質經梅納反應生成？", opts:["A) 葡萄糖 + 果糖","B) 天門冬醯胺 + 還原糖","C) 肌酸 + 胺基酸","D) 脂肪酸 + 甘油"], ans:"B", note:"Acrylamide = 天門冬醯胺 (Asparagine) + 還原糖 → 梅納反應 >120℃ 生成。"},
+  {id:"s0q2", topic:"毒理學", q:"毒性試驗中，90天餵食試驗屬於哪一種毒性試驗？", opts:["A) 急性毒性","B) 亞急性毒性","C) 亞慢性毒性","D) 慢性毒性"], ans:"C", note:"急性=單次，28天=亞急性，90天=亞慢性（Subchronic），2年=慢性。"},
+  {id:"s0q3", topic:"毒理學", q:"下列何者之毒性最強（LD₅₀ 最小）？", opts:["A) 氰化物","B) 咖啡因","C) 肉毒桿菌毒素","D) 食鹽"], ans:"C", note:"肉毒桿菌毒素 LD₅₀ 為 ng/kg 等級，是目前已知毒性最強的物質。"},
+  {id:"s0q4", topic:"加工危害物質", q:"台灣對醬油中 3-MCPD 之法定標準為何？", opts:["A) ≤ 0.1 ppm","B) ≤ 0.4 ppm","C) ≤ 1.0 ppm","D) ≤ 5.0 ppm"], ans:"B", note:"台灣醬油中 3-MCPD 標準為 ≤ 0.4 ppm（98年公告）。"},
+  {id:"s0q5", topic:"食品添加物", q:"下列何者「不屬於」食品添加物之選用原則？", opts:["A) 經毒理學評估確認安全","B) 可使食品成本降至最低","C) 不破壞食品營養價值","D) 有害雜質不得超過法定容許量"], ans:"B", note:"六大原則：安全無害、純淨、必要性、不破壞營養、消費者接受度、符合法規。"},
+  {id:"s0q6", topic:"食品添加物", q:"HLB 值 < 4 的乳化劑適合何種乳化型？", opts:["A) O/W（水包油）","B) W/O（油包水）","C) 水溶性","D) 油溶性"], ans:"B", note:"HLB < 4 親油性，適合 W/O（油包水）；HLB > 10 親水性，適合 O/W（水包油）。"},
+  {id:"s0q7", topic:"毒理學", q:"安全係數（SF）通常為多少？", opts:["A) 10","B) 50","C) 100","D) 1000"], ans:"C", note:"SF = 100（種間差異 10 × 種內個體差異 10）。"},
+  {id:"s0q8", topic:"加工危害物質", q:"下列何者不是 HCAs 的控制方法？", opts:["A) 微波預處理肉類","B) 高溫長時間烹調","C) 增加翻動頻率","D) 搭配富含抗氧化物的食材"], ans:"B", note:"高溫長時間烹調是 HCAs 的生成原因，不是控制方法。"},
+  {id:"s0q9", topic:"時事與法規", q:"2011年塑化劑事件中，違法添加的塑化劑為？", opts:["A) BPA","B) DEHP","C) DDT","D) PCB"], ans:"B", note:"DEHP（鄰苯二甲酸二酯）被非法添加取代棕櫚油，作為起雲劑使用。"},
+  {id:"s0q10", topic:"法規標準", q:"食品中每份反式脂肪含量低於多少可標示為「0」？", opts:["A) 0.1 g","B) 0.3 g","C) 0.5 g","D) 1.0 g"], ans:"C", note:"每份 < 0.5g 可標示為 0，是營養標示的常見陷阱。"},
+  {id:"s0q11", topic:"名詞解釋", q:"請解釋 ADI 的中文名稱與定義", type:"blank", ans:"每日容許攝取量", note:"ADI = Acceptable Daily Intake，指人體每日長期攝取而不致產生健康危害之劑量。"},
+  {id:"s0q12", topic:"名詞解釋", q:"請解釋 NOAEL 的中文名稱與定義", type:"blank", ans:"無可見有害作用劑量", note:"NOAEL = No Observed Adverse Effect Level，為 ADI 推導之基礎。"},
+  {id:"s0q13", topic:"計算", q:"ADI = NOAEL / _____（安全係數）", type:"blank", ans:"100", note:"安全係數 SF = 100（種間10 × 種內10）。"},
+  {id:"s0q14", topic:"計算", q:"每日最大容許攝取總量 = ADI × _____", type:"blank", ans:"體重", note:"單位需一致：ADI (mg/kg) × 體重 (kg) = mg/day。"},
+];
+
+// Stage 1: 第二份模擬卷 (2026 style)
+const STAGE1_Q = [
+  {id:"s1q1", topic:"法規動態", q:"2025年衛福部預告修正之食品添加物標準，下列何者為修正重點？", opts:["A) 全面開放新甜味劑","B) 禁用所有化學防腐劑","C) 加強著色劑及防腐劑使用範圍調整","D) 取消正面表列制度"], ans:"C", note:"衛福部持續檢討調整食品添加物使用範圍，以確保食品安全。"},
+  {id:"s1q2", topic:"法規標準", q:"某食品宣稱「零反式脂肪」，但每份含量 0.4 g。依我國法規此標示是否合法？", opts:["A) 合法，因每份 < 0.5g 可標示為 0","B) 不合法，超過 0.3g 須如實標示","C) 合法，但須加註少量反式脂肪","D) 不合法，反式脂肪不可標示為 0"], ans:"A", note:"每份 < 0.5g 可標示為 0，這是營養標示的常見陷阱。"},
+  {id:"s1q3", topic:"時事", q:"米酵菌酸（Bongkrekic acid）主要來源為？", opts:["A) 變質之發酵米製食品","B) 受污染之生菜沙拉","C) 過期之乳製品","D) 未煮熟之海鮮"], ans:"A", note:"2024年寶林茶室事件，原因為變質發酵米製品中唐菖蒲伯克氏菌產生的米酵菌酸。"},
+  {id:"s1q4", topic:"毒理學", q:"米酵菌酸 LD₅₀ ≈ 3.16 mg/kg，依分級屬於？", opts:["A) 極毒","B) 高毒","C) 中毒","D) 低毒"], ans:"B", note:"1~50 mg/kg → 高毒。<1極毒，1-50高毒，50-500中毒，500-5K低毒，>5K相對無害。"},
+  {id:"s1q5", topic:"食品接觸材料", q:"食品接觸材料（FCMs）常見安全疑慮為何？", opts:["A) 雙酚 A（BPA）自塑膠遷移","B) 食鹽添加碘","C) 飲料添加維生素C","D) 醬油添加胺基酸"], ans:"A", note:"BPA 自聚碳酸酯（PC）塑膠遷移至食品，具內分泌干擾作用。"},
+  {id:"s1q6", topic:"毒理學", q:"Ames test 利用何種微生物檢測致突變性？", opts:["A) 大腸桿菌","B) 沙門氏菌","C) 金黃色葡萄球菌","D) 乳酸鏈球菌"], ans:"B", note:"Ames test 使用沙門氏菌（Salmonella typhimurium）突變株檢測致突變性。"},
+  {id:"s1q7", topic:"新興危害", q:"下列何者為新興加工危害物質，與高溫油脂加工相關？", opts:["A) 味精","B) 縮水甘油酯（Glycidyl esters）","C) 檸檬酸","D) 乳酸"], ans:"B", note:"Glycidyl esters 與 3-MCPD 同為油脂精煉 >200℃ 產生之新興危害物質。"},
+  {id:"s1q8", topic:"毒理學", q:"安全係數 100 之由來為何？", opts:["A) 種間 10 × 種內 10","B) 種間 100 × 種內 1","C) 種間 5 × 種內 20","D) 種間 20 × 種內 5"], ans:"A", note:"SF = 100 = 種間差異（動物→人）×10 × 種內差異（人與人）×10。"},
+  {id:"s1q9", topic:"食品添加物", q:"亞硝酸鈉在肉品加工中之角色為何？", opts:["A) 僅為著色劑","B) 保色 + 抑制肉毒桿菌","C) 僅為防腐劑","D) 僅為調味劑"], ans:"B", note:"亞硝酸鈉同時具有保色功能（與肌紅蛋白反應）及抑制肉毒桿菌（~100ppm）之雙重功能。"},
+  {id:"s1q10", topic:"暴露評估", q:"暴露評估三步驟之正確順序為何？", opts:["A) EDI → TMDI → 風險管理","B) TMDI → EDI → 風險管理","C) 風險管理 → TMDI → EDI","D) TMDI → 風險管理 → EDI"], ans:"B", note:"暴露評估步驟：TMDI（理論最大）→ EDI（實際估計）→ 風險管理。"},
+  {id:"s1q11", topic:"ADI計算", q:"NOAEL = 0.5 mg/kg, SF=100, 則 ADI = ?", type:"blank", ans:"0.005", note:"ADI = NOAEL / 100 = 0.5 / 100 = 0.005 mg/kg bw/day"},
+  {id:"s1q12", topic:"ADI計算", q:"ADI = 0.005, 體重 60kg, 每日上限 = ? mg/day", type:"blank", ans:"0.3", note:"每日上限 = ADI × 體重 = 0.005 × 60 = 0.3 mg/day"},
+  {id:"s1q13", topic:"食品安全文化", q:"GFSI 推動之食品安全文化評量不包括？", opts:["A) 領導階層承諾","B) 員工賦權與溝通","C) 提高食品售價","D) 持續改善"], ans:"C", note:"提高售價非食品安全文化指標。"},
+  {id:"s1q14", topic:"HLB", q:"HLB=8 之大豆卵磷脂適合何種體系？", opts:["A) 純油性","B) 純水性","C) 油水混合之中間型","D) 固態脂肪"], ans:"C", note:"HLB=8 屬於中間型（4~10），適合油水混合體系。"},
+];
+
+// Stage 2: 衝刺遊戲題庫 (from Python game)
+const STAGE2_Q = [
+  {id:"p1", topic:"加工危害物質", q:"多環芳香烴（PAHs）主要在什麼條件下生成？", opts:["A) 低溫長時間加熱","B) 高溫（>400℃）缺氧不完全燃燒","C) 冷凍乾燥","D) 微波加熱"], ans:"B", note:"PAHs 在有機物 >400℃ 缺氧不完全燃燒時產生，如燒烤、煙燻。"},
+  {id:"p2", topic:"加工危害物質", q:"下列何者是 PAHs 的代表物質，也是 IARC 第1類致癌物？", opts:["A) Acrylamide","B) Benzo[a]pyrene (BaP)","C) 3-MCPD","D) 反式脂肪"], ans:"B", note:"BaP 是 PAHs 的代表，IARC 確定人類致癌物（Group 1）。"},
+  {id:"p3", topic:"加工危害物質", q:"歐盟對嬰幼兒食品中 BaP 的限量標準是多少？", opts:["A) ≤ 0.1 µg/kg","B) ≤ 1 µg/kg","C) ≤ 10 µg/kg","D) ≤ 100 µg/kg"], ans:"B", note:"歐盟：嬰幼兒食品 ≤ 1 µg/kg，其他食品 ≤ 10 µg/kg。"},
+  {id:"p4", topic:"加工危害物質", q:"丙烯醯胺由哪兩種物質經梅納反應生成？", opts:["A) 葡萄糖 + 果糖","B) 天門冬醯胺 + 還原糖","C) 肌酸 + 胺基酸","D) 脂肪酸 + 甘油"], ans:"B", note:"Acrylamide = 天門冬醯胺 (Asparagine) + 還原糖，經梅納反應 >120℃ 生成。"},
+  {id:"p5", topic:"加工危害物質", q:"降低丙烯醯胺的方法，下列何者正確？", opts:["A) 提高油炸溫度","B) 添加天門冬醯胺酶","C) 增加浸泡時間","D) 加入更多還原糖"], ans:"B", note:"Asparaginase 可分解天門冬醯胺，減少丙烯醯胺前驅物。"},
+  {id:"p6", topic:"加工危害物質", q:"異環胺（HCAs）的生成需要哪些條件？", opts:["A) 胺基酸 + 肌酸 + 高溫（>150℃）","B) 醣類 + 脂肪酸 + 低溫","C) 蛋白質 + 水 + 發酵","D) 澱粉 + 酵素 + 常溫"], ans:"A", note:"HCAs 由胺基酸、肌酸在高溫（>150℃）烹調肉品時生成。"},
+  {id:"p7", topic:"加工危害物質", q:"反式脂肪酸最主要的來源是？", opts:["A) 天然反芻動物","B) 油脂部分氫化","C) 油炸過程","D) 烘焙過程"], ans:"B", note:"部分氫化油（Partial hydrogenation）是反式脂肪最主要的來源。"},
+  {id:"p8", topic:"加工危害物質", q:"台灣食品標示中，每份反式脂肪低於多少可標示為「0」？", opts:["A) 0.1g","B) 0.3g","C) 0.5g","D) 1.0g"], ans:"C", note:"每份 < 0.5g 可標示為 0。"},
+  {id:"p8b", topic:"加工危害物質", q:"下列何者不是降低反式脂肪的技術？", opts:["A) 改善氫化製程（降低溫度壓力）","B) 使用高油酸油取代氫化油","C) 使用酵素進行油脂修飾","D) 降低油炸油更換頻率以免浪費"], ans:"D", note:"降低更換頻率會增加油脂劣變內容物，無法減少反式脂肪。"},
+  {id:"p9", topic:"加工危害物質", q:"3-MCPD 主要汙染哪一類食品？", opts:["A) 乳製品","B) 化學醬油","C) 烘焙糕點","D) 碳酸飲料"], ans:"B", note:"酸水解植物蛋白製造化學醬油時容易產生 3-MCPD。"},
+  {id:"p10", topic:"加工危害物質", q:"台灣對醬油中 3-MCPD 的標準是多少？", opts:["A) ≤ 0.1 ppm","B) ≤ 0.4 ppm","C) ≤ 1.0 ppm","D) ≤ 5.0 ppm"], ans:"B", note:"台灣醬油中 3-MCPD 標準為 ≤ 0.4 ppm。"},
+  {id:"p11", topic:"食品添加物", q:"下列何者「不是」食品添加物的選用原則？", opts:["A) 經毒理學評估確認安全","B) 可使食品成本降至最低","C) 不破壞食品營養價值","D) 有害雜質不得超過法定容許量"], ans:"B", note:"六大原則：安全無害、純淨、必要性、不破壞營養、消費者接受度、符合法規。"},
+  {id:"p12", topic:"食品添加物", q:"HLB 值 < 4 的乳化劑適合哪種乳化型？", opts:["A) O/W（水包油）","B) W/O（油包水）","C) 水溶性","D) 油溶性"], ans:"B", note:"HLB < 4 親油性，適合 W/O（油包水）。"},
+  {id:"p13", topic:"食品添加物", q:"大豆卵磷脂的 HLB 值約為多少？", opts:["A) 2","B) 4","C) 8","D) 16"], ans:"C", note:"大豆卵磷脂 HLB ≈ 8，屬於中間型。"},
+  {id:"p14", topic:"食品添加物", q:"阿斯巴甜對哪一種疾病患者有危害？", opts:["A) 糖尿病","B) 苯酮尿症 (PKU)","C) 高血壓","D) 腎臟病"], ans:"B", note:"阿斯巴甜含苯丙胺酸，PKU 患者無法代謝。"},
+  {id:"p15", topic:"食品添加物", q:"下列甜味劑中甜度是蔗糖 500 倍的是？", opts:["A) 阿斯巴甜","B) 甜精","C) 糖精","D) 山梨醇"], ans:"C", note:"糖精 500×，阿斯巴甜 200×，甜精 30-40×。"},
+  {id:"p15b", topic:"食品添加物", q:"丙酸（Propionic acid）在我國食品添加物分類中屬於哪一類？", opts:["A) 抗氧化劑","B) 防腐劑","C) 調味劑","D) 品質改良劑"], ans:"B", note:"丙酸屬防腐劑，主要用於麵包糕餅，對黴菌及真菌有效，pH<6.5效果佳。"},
+
+  {id:"p16", topic:"毒理學", q:"「所有物質都是毒，劑量決定它是不是毒」這句話是誰說的？", opts:["A) 希波克拉底","B) 帕拉塞爾蘇斯 (Paracelsus)","C) 亞里斯多德","D) 佛萊明"], ans:"B", note:"Paracelsus 被稱為毒理學之父，提出「The dose makes the poison」。"},
+  {id:"p17", topic:"毒理學", q:"LD₅₀ 的定義是什麼？", opts:["A) 使50%動物產生症狀","B) 使50%動物死亡","C) 使50%動物體重減輕","D) 使100%動物死亡"], ans:"B", note:"LD₅₀ = Lethal Dose 50%，使實驗動物 50% 死亡之劑量。"},
+  {id:"p18", topic:"毒理學", q:"LD₅₀ 約 190 mg/kg 的物質屬於哪一毒性等級？", opts:["A) 極毒","B) 高毒","C) 中毒","D) 低毒"], ans:"C", note:"50~500 mg/kg → 中毒。咖啡因 ≈190 mg/kg 屬於中毒。"},
+  {id:"p19", topic:"毒理學", q:"下列何者毒性最強？", opts:["A) 氰化物","B) 咖啡因","C) 肉毒桿菌毒素","D) 食鹽"], ans:"C", note:"肉毒桿菌毒素 LD₅₀ 為 ng/kg 等級，已知毒性最強。"},
+  {id:"p20", topic:"毒理學", q:"安全係數（SF）通常為多少？", opts:["A) 10","B) 50","C) 100","D) 1000"], ans:"C", note:"SF = 100（種間差異 10 × 種內差異 10）。"},
+  {id:"p21", topic:"毒理學", q:"若 NOAEL = 250 mg/kg，ADI 為多少？", opts:["A) 0.25 mg/kg","B) 2.5 mg/kg","C) 25 mg/kg","D) 250 mg/kg"], ans:"B", note:"ADI = NOAEL / SF = 250 / 100 = 2.5 mg/kg bw/day。"},
+  {id:"p22", topic:"毒理學", q:"NOAEL 的中文意義是什麼？", opts:["A) 最低致死劑量","B) 無可見有害作用劑量","C) 半數致死劑量","D) 最大容許攝取量"], ans:"B", note:"NOAEL = No Observed Adverse Effect Level。"},
+  {id:"p23", topic:"毒理學", q:"90天餵食試驗屬於哪一種毒性試驗？", opts:["A) 急性","B) 亞急性","C) 亞慢性","D) 慢性"], ans:"C", note:"急性=單次，28天=亞急性，90天=亞慢性，2年=慢性。"},
+  {id:"p24", topic:"毒理學", q:"致癌試驗通常需要進行多久？", opts:["A) 28天","B) 90天","C) 1年","D) 約2年（動物終生）"], ans:"D", note:"致癌試驗通常長達 2 年（動物終生）。"},
+  {id:"p25", topic:"毒理學", q:"暴露評估的第一步是什麼？", opts:["A) EDI","B) TMDI","C) 風險管理","D) 風險溝通"], ans:"B", note:"順序：TMDI → EDI → 風險管理。"},
+  {id:"p26", topic:"毒理學", q:"體重 60kg，ADI = 2.5 mg/kg，每日最大攝取量？", opts:["A) 15 mg","B) 150 mg","C) 1500 mg","D) 60 mg"], ans:"B", note:"每日攝取量 = ADI × 體重 = 2.5 × 60 = 150 mg/day。"},
+  {id:"p27", topic:"毒理學", q:"下列何者屬於生殖毒性試驗之觀察指標？", opts:["A) LD₅₀","B) 腫瘤發生率","C) 精子品質與受孕率","D) 血壓變化"], ans:"C", note:"生殖試驗觀察性腺發育、精子品質、卵子成熟度、妊娠等。"},
+  {id:"p28", topic:"毒理學", q:"「The dose makes the poison」涵義？", opts:["A) 所有物質都安全","B) 所有物質都有毒","C) 劑量決定物質是否有毒","D) 毒物可當藥物"], ans:"C", note:"Paracelsus 核心思想：劑量決定毒性。"},
+  {id:"p29", topic:"時事", q:"2008年三聚氰胺事件原因？", opts:["A) 添加防腐劑超標","B) 添加三聚氰胺偽裝蛋白質含量","C) 農藥殘留超標","D) 細菌汙染"], ans:"B", note:"三聚氰胺含氮量高，使凱氏定氮法檢測出蛋白質數值異常升高。"},
+  {id:"p30", topic:"時事", q:"2011年塑化劑事件違法添加的塑化劑是？", opts:["A) BPA","B) DEHP","C) DDT","D) PCB"], ans:"B", note:"DEHP 被非法添加取代棕櫚油，作為起雲劑使用。"},
+  {id:"p30b", topic:"時事", q:"風險分析的三大架構為何？", opts:["A) 風險評估、風險管理、風險溝通","B) 風險辨識、風險測量、風險控制","C) 危害分析、關鍵控制點、監測系統","D) 預防、監控、改善"], ans:"A", note:"三大架構：風險評估（科學基礎）、風險管理（政策制定）、風險溝通（資訊透明）。"},
+  {id:"p30c", topic:"食品安全文化", q:"食品添加物管理最重要的基本原則是？", opts:["A) 負面表列","B) 正面表列（Positive List）","C) 僅需業者自主管理","D) 完全禁用"], ans:"B", note:"正面表列：僅允許表列之添加物使用，未列者不得使用，確保安全管理。"},
+  {id:"p30d", topic:"暴露評估", q:"若 NOAEL=250 mg/kg，SF=100，則 ADI=？60kg成人每日容許上限為？", opts:["A) ADI=2.5, 上限=150 mg/day","B) ADI=25, 上限=1500 mg/day","C) ADI=0.25, 上限=15 mg/day","D) ADI=0.025, 上限=1.5 mg/day"], ans:"A", note:"ADI=250/100=2.5 mg/kg，每日上限=2.5×60=150 mg/day。"},
+  {id:"p31", topic:"名詞縮寫", q:"ADI 的完整名稱是什麼？", opts:["A) Average Daily Intake","B) Acceptable Daily Intake","C) Absolute Daily Index","D) Acceptable Dose Index"], ans:"B", note:"ADI = Acceptable Daily Intake（每日容許攝取量）。"},
+  {id:"p32", topic:"名詞縮寫", q:"IARC 的中文名稱是什麼？", opts:["A) 世界衛生組織","B) 國際癌症研究總署","C) 聯合國糧農組織","D) 歐洲食品安全局"], ans:"B", note:"IARC = International Agency for Research on Cancer。"},
+  {id:"p33", topic:"名詞縮寫", q:"TMDI 的中文意義是什麼？", opts:["A) 實際每日攝取量","B) 理論每日最大攝取量","C) 總每日最小攝取量","D) 目標每日攝取量"], ans:"B", note:"TMDI = Theoretical Maximum Daily Intake。"},
+  {id:"p34", topic:"名詞縮寫", q:"LOAEL 的中文意義是什麼？", opts:["A) 最低觀察效應劑量","B) 最低可見有害作用劑量","C) 半數致死劑量","D) 最大無作用劑量"], ans:"B", note:"LOAEL = Lowest Observed Adverse Effect Level。"},
+  {id:"p35", topic:"食品添加物", q:"食品添加物之定義中，所謂「加工助劑」與食品添加物最主要的差別在於？", opts:["A) 加工助劑不需標示於成品","B) 加工助劑毒性更高","C) 加工助劑不可使用化學合成物","D) 加工助劑需經更嚴格的審查"], ans:"A", note:"加工助劑在最終產品中不具功能、不會殘留或殘留量極低，故不須標示。"},
+  {id:"p36", topic:"食品添加物", q:"食品添加物使用之六大選用原則不包括下列何者？", opts:["A) 經毒理學評估確認安全","B) 添加後可延長產品保存期限3倍以上","C) 不破壞食品營養價值","D) 消費者能接受且符合食品法規"], ans:"B", note:"六大原則：安全無害、純淨、必要性、不破壞營養、消費者接受度、符合法規。並無延長保存期限倍數之規定。"},
+];
+
+// Stage 3: 記憶口訣 (from Python game memory_items)
+const STAGE3_Q = [
+  {id:"m1", type:"blank", topic:"LD50分級", q:"LD₅₀ 毒性分級：<1 ___，1~50 高毒，50~500 中毒，500~5000 低毒", ans:"極毒", note:"<1 極毒（肉毒桿菌毒素），1-50 高毒（氰化物），50-500 中毒（咖啡因）。"},
+  {id:"m2", type:"blank", topic:"安全係數", q:"安全係數 SF = ___（種間 10 × 種內 10）", ans:"100", note:"SF = 100 是食品安全性評估的核心數字。"},
+  {id:"m3", type:"blank", topic:"生成溫度", q:"Acrylamide 生成溫度 > ___℃", ans:"120", note:">120℃ 天門冬醯胺+還原糖→梅納反應。"},
+  {id:"m4", type:"blank", topic:"生成溫度", q:"PAHs 生成溫度 > ___℃", ans:"400", note:">400℃ 缺氧不完全燃燒。"},
+  {id:"m5", type:"blank", topic:"ADI計算", q:"ADI = NOAEL / ___", ans:"100", note:"ADI = NOAEL / SF（安全係數）。"},
+  {id:"m6", type:"blank", topic:"法規標準", q:"台灣醬油 3-MCPD 標準 ≤ ___ ppm", ans:"0.4", note:"台灣醬油中 3-MCPD ≤ 0.4 ppm。"},
+  {id:"m7", type:"blank", topic:"法規標準", q:"每份反式脂肪含量 < ___ g 可標示為 0", ans:"0.5", note:"每份 < 0.5g 可標示為 0。"},
+  {id:"m8", type:"blank", topic:"HLB", q:"HLB < ___ → W/O（油包水）", ans:"4", note:"HLB < 4 親油性，適合 W/O。"},
+  {id:"m9", type:"blank", topic:"HLB", q:"HLB > ___ → O/W（水包油）", ans:"10", note:"HLB > 10 親水性，適合 O/W。"},
+  {id:"m10", type:"blank", topic:"LD50分級", q:"肉毒桿菌毒素毒性分級為 ___（<1 mg/kg）", ans:"極毒", note:"肉毒桿菌毒素是已知毒性最強的物質。"},
+  {id:"m11", type:"blank", topic:"毒性試驗", q:"慢性毒性試驗約需 ___ 年", ans:"2", note:"致癌試驗約 2 年（動物終生）。"},
+  {id:"m12", type:"blank", topic:"毒性試驗", q:"毒性試驗順序：急 → ___ → 亞慢 → 慢", ans:"亞急", note:"急性(單次) → 亞急性(28天) → 亞慢性(90天) → 慢性(2年)。"},
+  {id:"m13", type:"blank", topic:"暴露評估", q:"暴露評估步驟：___ → EDI → 風險管理", ans:"TMDI", note:"TMDI（理論最大）→ EDI（實際估計）→ 風險管理。"},
+  {id:"m14", type:"blank", topic:"甜味劑", q:"糖精甜度為蔗糖 ___ 倍", ans:"500", note:"糖精 500×，阿斯巴甜 200×，甜精 30×。"},
+  {id:"m15", type:"blank", topic:"甜味劑", q:"阿斯巴甜甜度為蔗糖 ___ 倍", ans:"200", note:"阿斯巴甜甜度為蔗糖 200 倍。"},
+  {id:"m16", type:"blank", topic:"甜味劑", q:"甜精甜度為蔗糖 ___ 倍", ans:"30", note:"甜精甜度為蔗糖 30~40 倍。"},
+];
+
+// Stage 4: Total Review — combined from all sources + flashcards
+const STAGE4_FLASHCARDS = [
+  {front:"ADI 公式", back:"ADI = NOAEL / 100"},
+  {front:"安全係數 SF", back:"100（種間10 × 種內10）"},
+  {front:"每日攝取總量", back:"ADI × 體重(kg)"},
+  {front:"暴露評估順序", back:"TMDI → EDI → 風險管理"},
+  {front:"LD₅₀ 分級：<1", back:"極毒（肉毒桿菌毒素）"},
+  {front:"LD₅₀ 分級：1~50", back:"高毒（氰化物、米酵菌酸）"},
+  {front:"LD₅₀ 分級：50~500", back:"中毒（咖啡因≈190）"},
+  {front:"LD₅₀ 分級：500~5K", back:"低毒（食鹽≈3000）"},
+  {front:"LD₅₀ 分級：>5K", back:"相對無害（維生素C≈11900）"},
+  {front:"Acrylamide 生成條件", back:"天門冬醯胺+還原糖 >120℃ → 梅納反應"},
+  {front:"PAHs 生成條件", back:"有機物 >400℃ 缺氧不完全燃燒"},
+  {front:"HCAs 生成條件", back:"胺基酸+肌酸+高溫 >150℃"},
+  {front:"反式脂肪主要來源", back:"油脂部分氫化"},
+  {front:"3-MCPD 主要來源", back:"化學醬油（酸水解植物蛋白）"},
+  {front:"3-MCPD 標準（台灣醬油）", back:"≤ 0.4 ppm"},
+  {front:"反式標示 0 上限", back:"每份 < 0.5g"},
+  {front:"HLB < 4", back:"W/O（油包水）"},
+  {front:"HLB > 10", back:"O/W（水包油）"},
+  {front:"大豆卵磷脂 HLB", back:"8（中間型）"},
+  {front:"糖精甜度", back:"蔗糖 500 倍"},
+  {front:"阿斯巴甜甜度", back:"蔗糖 200 倍"},
+  {front:"甜精甜度", back:"蔗糖 30~40 倍"},
+  {front:"BaP 的 IARC 分類", back:"Group 1（確定人類致癌物）"},
+  {front:"Acrylamide 的 IARC 分類", back:"Group 2A（很可能）"},
+  {front:"Paracelsus 名言", back:"「The dose makes the poison.」"},
+  {front:"加工助劑 vs 添加物", back:"加工助劑最終無功能作用；添加物具功能性"},
+  {front:"NOAEL", back:"無可見有害作用劑量"},
+  {front:"LOAEL", back:"最低可見有害作用劑量"},
+  {front:"三聚氰胺事件（2008）", back:"添加偽裝蛋白質→修正檢測法"},
+  {front:"塑化劑事件（2011）", back:"DEHP 取代棕櫚油→三級品管"},
+  {front:"Nisin 功能", back:"天然防腐劑，抑制 G⁺ 菌及孢子"},
+  {front:"Ames test", back:"沙門氏菌檢測致突變性"},
+  {front:"蛋白質換算係數", back:"6.25（凱氏定氮法）"},
+  {front:"KOH分子量", back:"56.1（油脂皂化價計算）"},
+];
+
+// ===================================================================
+// STAGE 5: 補充題庫·歷屆考題 (new supplementary questions)
+// ===================================================================
+const STAGE5_Q = [
+  // ---- 新興危害與時事 ----
+  {id:"x1", topic:"新興時事", q:"2024年寶林茶室食物中毒事件之主要致病物質為何？", opts:["A) 沙門氏菌","B) 米酵菌酸 (Bongkrekic acid)","C) 黃麴毒素","D) 肉毒桿菌毒素"], ans:"B", note:"寶林茶室事件由變質發酵米製品中唐菖蒲伯克氏菌產生之米酵菌酸引起。"},
+  {id:"x2", topic:"新興時事", q:"米酵菌酸 (Bongkrekic acid) 之 LD₅₀ 約 3.16 mg/kg，其毒性分級為？", opts:["A) 極毒 (<1)","B) 高毒 (1~50)","C) 中毒 (50~500)","D) 低毒 (500~5K)"], ans:"B", note:"1~50 mg/kg 屬高毒。Bongkrekic acid 對粒線體 ADP/ATP 轉運酶具高度抑制性。"},
+  {id:"x3", topic:"新興時事", q:"食品接觸材料 (FCMs) 中最常見之安全疑慮為？", opts:["A) BPA 自聚碳酸酯塑膠遷移","B) 鉛從陶瓷溶出","C) 甲醛殘留","D) 塑化劑遷移"], ans:"A", note:"BPA (雙酚A) 自 PC 塑膠遷移至食品，具內分泌干擾活性，歐盟及台灣已逐步限用。"},
+  {id:"x4", topic:"新興時事", q:"縮水甘油酯 (Glycidyl esters) 主要在哪種加工條件下產生？", opts:["A) 低溫發酵","B) 高溫油脂精煉 (>200℃)","C) 高壓殺菌","D) 冷凍乾燥"], ans:"B", note:"Glycidyl esters 與 3-MCPD 同為油脂精煉高溫 (>200℃) 下生成之新興加工危害物質。"},
+  {id:"x5", topic:"新興時事", q:"GFSI 推動之食品安全文化評量涵蓋下列何者？", opts:["A) 提高產品售價以利品管","B) 領導階層承諾與員工賦權","C) 減少產品多樣性","D) 降低研發經費"], ans:"B", note:"GFSI 食品安全文化包含領導承諾、員工賦權溝通、適應性、風險認知及持續改善五大面向。"},
+  {id:"x6", topic:"新興時事", q:"風險分析之三大架構中，政府、業者與消費者各自角色為何？", opts:["A) 政府負責評估，業者管理，消費者溝通","B) 政府負責管理，科學家評估，業者執行，消費者反饋","C) 全由業者自行負責","D) 政府全權主導"], ans:"B", note:"科學家進行風險評估，政府制定風險管理政策，業者執行，消費者參與風險溝通。"},
+
+  // ---- 毒理學與安全性評估 ----
+  {id:"x7", topic:"毒理學進階", q:"Ames test 之原理為何？", opts:["A) 利用沙門氏菌組胺酸營養缺陷株檢測致突變性","B) 檢測動物體重變化","C) 測量細胞死亡率","D) 分析 DNA 序列"], ans:"A", note:"Ames test 使用 Salmonella typhimurium his⁻ 突變株，觀察是否發生回復突變 (his⁻→his⁺)，配合 S9 mix 模擬哺乳類代謝活化。"},
+  {id:"x8", topic:"毒理學進階", q:"Ames test 中加入 S9 mix 之目的為何？", opts:["A) 提供細菌營養","B) 模擬哺乳動物肝臟代謝活化","C) 抑制細菌生長","D) 增加突變頻率"], ans:"B", note:"S9 mix 為大鼠肝臟萃取液，含 cytochrome P450 酵素，可代謝活化前驅致突變物。"},
+  {id:"x9", topic:"毒理學進階", q:"食品安全性評估之四大步驟的順序為何？", opts:["A) 危害辨識 → 劑量反應評估 → 暴露評估 → 風險特性描述","B) 暴露評估 → 危害辨識 → 風險管理 → 風險溝通","C) 劑量反應 → 危害辨識 → 暴露評估 → 風險管理","D) 危害辨識 → 暴露評估 → 劑量反應 → 風險特性"], ans:"A", note:"四大步驟：危害辨識 (Hazard ID) → 劑量反應 (Dose-Response) → 暴露評估 (Exposure) → 風險特性描述 (Risk Characterization)。"},
+  {id:"x10", topic:"毒理學進階", q:"「劑量決定毒性」之概念在毒理學中稱為什麼？", opts:["A) 閾值 (Threshold)","B) 半數致死劑量","C) 安全係數","D) 生物累積"], ans:"A", note:"所有物質皆有劑量-反應關係，存在一個閾值 (Threshold)，低於此值不產生有害效應。NOAEL 即為此概念之應用。"},
+  {id:"x11", topic:"毒理學進階", q:"IARC 致癌物分類中，Group 2B 代表？", opts:["A) 確定人類致癌物","B) 很可能人類致癌物","C) 可能人類致癌物","D) 無法分類"], ans:"C", note:"Group 1 確定 (BaP)｜Group 2A 很可能 (Acrylamide)｜Group 2B 可能 (咖啡酸)｜Group 3 無法分類。"},
+  {id:"x12", topic:"毒理學進階", q:"慢性毒性/致癌試驗之標準試驗動物與時間為？", opts:["A) 大鼠 2 年","B) 小鼠 1 年","C) 兔子 3 年","D) 狗 5 年"], ans:"A", note:"標準慢性毒性/致癌試驗使用大鼠，試驗期約 2 年（涵蓋動物終生）。"},
+
+  // ---- 食品添加物進階 ----
+  {id:"x13", topic:"食品添加物進階", q:"我國食品添加物管理採行正面表列制度，下列何者為其優點？", opts:["A) 業者可自由使用任何添加物","B) 未列表之添加物不得使用，確保安全","C) 不需進行安全評估","D) 僅需標示主要成分"], ans:"B", note:"正面表列 (Positive List)：僅允許表列內之添加物於指定範圍及限量下使用，未列者一律禁用。"},
+  {id:"x14", topic:"食品添加物進階", q:"Clean Label (清淨標示) 運動面臨之三大產業挑戰為何？", opts:["A) 成本、風味、包裝","B) 保存期限、質地口感、成本","C) 顏色、香氣、營養","D) 運輸、儲存、銷售"], ans:"B", note:"Clean Label 要求減少添加物使用，業者面臨保存期限縮短、質地口感改變、以及替代成本上升三大挑戰。"},
+  {id:"x15", topic:"食品添加物進階", q:"加工助劑 (Processing Aid) 與食品添加物最主要之差別為何？", opts:["A) 加工助劑毒性較高","B) 加工助劑在最終產品中不具功能且殘留極低","C) 加工助劑不需任何安全性評估","D) 加工助劑全部為天然物質"], ans:"B", note:"加工助劑於加工過程中添加，在最終產品中不具技術功能且殘留量極低，故不須標示於成品。"},
+  {id:"x16", topic:"食品添加物進階", q:"下列何者為食品添加物之使用目的？", opts:["A) 僅延長保存期限","B) 改善質地、色澤、風味、營養強化等","C) 取代原料","D) 降低營養價值"], ans:"B", note:"食品添加物使用目的涵蓋：延長保存、改善質地色澤風味、營養強化、促進加工等。"},
+  {id:"x17", topic:"食品添加物進階", q:"亞硝酸鈉在肉品加工中抑制肉毒桿菌之有效濃度約為？", opts:["A) 50 ppm","B) 100 ppm","C) 200 ppm","D) 500 ppm"], ans:"B", note:"亞硝酸鈉約 100 ppm 即可有效抑制肉毒桿菌 (Clostridium botulinum) 孢子萌發。"},
+  {id:"x18", topic:"食品添加物進階", q:"Nisin 作為天然防腐劑之抗菌機制為何？", opts:["A) 抑制細胞壁合成","B) 於細胞膜形成孔洞致內容物外洩","C) 抑制蛋白質合成","D) 抑制 DNA 複製"], ans:"B", note:"Nisin 為乳酸鏈球菌產生之抗菌胜肽，在 G⁺ 菌細胞膜上形成孔洞，導致離子洩漏與細胞死亡。對孢子亦有抑制作用。"},
+  {id:"x19", topic:"食品添加物進階", q:"二氧化硫 (SO₂) 及亞硫酸鹽在食品中主要功能為？", opts:["A) 抗氧化及漂白","B) 增稠","C) 乳化","D) 調味"], ans:"A", note:"亞硫酸鹽具抗氧化、漂白及抑制酵素性褐變功能，常用於果乾、葡萄酒等。部分人可能引發氣喘過敏反應。"},
+
+  // ---- 加工危害物質進階 ----
+  {id:"x20", topic:"加工危害進階", q:"PAHs (多環芳香烴) 在體內之代謝活化途徑為何？", opts:["A) 直接排出體外","B) 經 CYP1A1 代謝成 BPDE，與 DNA 形成共價鍵結","C) 被胃酸分解","D) 經腎臟過濾"], ans:"B", note:"BaP 經 CYP1A1/CYP1B1 代謝活化為 BPDE，與 DNA 形成 adduct，若未被修復即可能導致基因突變。"},
+  {id:"x21", topic:"加工危害進階", q:"丙烯醯胺 (Acrylamide) 在體內之主要代謝活化產物為何？", opts:["A) 丙烯酸","B) 環氧丙醯胺 (Glycidamide)","C) 乳酸","D) 丙酮酸"], ans:"B", note:"Acrylamide 經 P450 代謝為 Glycidamide (環氧丙醯胺)，後者與 DNA/protein 形成 adduct，為主要致突變形式。"},
+  {id:"x22", topic:"加工危害進階", q:"食品中 3-MCPD 之主要結構異構物包含哪些？", opts:["A) 3-MCPD, 2-MCPD, 1,3-DCP","B) 僅 3-MCPD","C) 3-MCPD 及 2-MCPD","D) 3-MCPD, 2-MCPD, 1,2-DCP"], ans:"A", note:"3-MCPD (3-氯-1,2-丙二醇), 2-MCPD (2-氯-1,3-丙二醇), 1,3-DCP (1,3-二氯-2-丙醇)。1,3-DCP 之毒性更高。"},
+  {id:"x23", topic:"加工危害進階", q:"鹼性加工破壞產物 Lysinoalanine 與 Lanthionine 常見於何種食品？", opts:["A) 酸性飲料","B) 乳製品與豆製品（鹼+熱處理）","C) 油炸馬鈴薯","D) 發酵食品"], ans:"B", note:"乳製品及豆製品在鹼性條件加熱時，蛋白質中的胺基酸會發生交聯反應，生成 Lysinoalanine 及 Lanthionine。"},
+  {id:"x24", topic:"加工危害進階", q:"反式脂肪酸攝取量每增加 2% 總熱量，心血管疾病風險約增加？", opts:["A) 5%","B) 10%","C) 23%","D) 50%"], ans:"C", note:"大型統合分析顯示，反式脂肪酸攝取每增加 2% 總熱量，CVD 風險增加約 23%，LDL 上升 HDL 下降。"},
+
+  // ---- 歷屆考題綜合 ----
+  {id:"x25", topic:"歷屆考題", q:"下列食品添加物之分類何者正確？①木糖醇 ②過氧化氫 ③丙酸 ④亞硝酸鈉", opts:["A) ①甜味劑②殺菌劑③防腐劑④保色劑","B) ①甜味劑②抗氧化劑③調味劑④防腐劑","C) ①調味劑②漂白劑③防腐劑④保色劑","D) ①甜味劑②殺菌劑③抗氧化劑④保色劑"], ans:"A", note:"木糖醇=甜味劑, H₂O₂=殺菌劑, 丙酸=防腐劑, 亞硝酸鈉=保色劑 (兼抑菌)。"},
+  {id:"x26", topic:"歷屆考題", q:"天然來源之食品添加物可依來源分為三類，下列何者為物理性來源？", opts:["A) 微生物發酵 (Nisin)","B) 動植物萃取 (木瓜蛋白酶)","C) 木炭過濾或蒸餾取得之煙燻香料","D) 化學合成維生素C"], ans:"C", note:"物理性來源：木炭過濾、蒸餾等物理方法取得。生物性：微生物發酵 (Nisin)。天然萃取：動植物 (木瓜蛋白酶、維生素C)。"},
+  {id:"x27", topic:"歷屆考題", q:"台灣食品添加物管理體系中，下列何者不屬於三級品管制度？", opts:["A) 業者自主管理","B) 第三方驗證機構稽核","C) 政府抽驗監測","D) 消費者自行送驗"], ans:"D", note:"三級品管：一級=業者自主管理，二級=第三方驗證，三級=政府抽驗監測。消費者送驗不屬常規品管制度。"},
+  {id:"x28", topic:"歷屆考題", q:"LD₅₀ 與 ADI 之關係說明何者正確？", opts:["A) LD₅₀ 越大則 ADI 越小","B) LD₅₀ 為急性毒性指標，ADI 為慢性安全劑量","C) LD₅₀ 可直接換算為 ADI","D) ADI 一定大於 LD₅₀"], ans:"B", note:"LD₅₀ 測急性毒性（單次），ADI 為長期每日安全攝取量（慢性）。兩者無直接換算關係。"},
+  {id:"x29", topic:"歷屆考題", q:"Nisin 與下列何種防腐劑之抗菌機制最為不同？", opts:["A) 山梨酸 (破壞細胞內酵素)","B) 乳酸鏈球菌素 (孔洞形成)","C) 苯甲酸 (干擾代謝)","D) 丙酸 (干擾黴菌細胞膜)"], ans:"B", note:"Nisin 與乳酸鏈球菌素皆為孔洞形成機制，山梨酸、苯甲酸、丙酸則透過不同機制 (干擾代謝/細胞膜) 作用。"},
+  {id:"x30", topic:"歷屆考題", q:"我國對食品添加物之管理原則不包含下列何者？", opts:["A) 使用範圍及限量標準","B) 正面表列制度","C) 業者可自行標示為食品添加物","D) 規格標準 (纯度、重金屬限量)"], ans:"C", note:"食品添加物須由中央主管機關公告指定，業者不得自行認定或標示為食品添加物。"},
+
+  // ---- 必考重點加強 ----
+  {id:"x31", topic:"必考焦點", q:"食品添加物之法定定義中，下列何者不包含在添加目的內？", opts:["A) 著色、調味、防腐","B) 漂白、乳化、增加香味","C) 取代原料以降低成本","D) 安定品質、促進發酵、增加稠度"], ans:"C", note:"法定目的：著色、調味、防腐、漂白、乳化、增加香味、安定品質、促進發酵、增加稠度、強化營養、防止氧化。不包括降低成本。"},
+  {id:"x32", topic:"必考焦點", q:"我國食品安全衛生管理法中，食品添加物之規格標準應包含哪些項目？", opts:["A) 僅含英文品名與使用範圍","B) 品名、使用範圍、使用目的與方法、最大使用量、必要時附加限制","C) 僅含最大使用量","D) 僅含使用範圍與限量"], ans:"B", note:"食品添加物規格標準應載明：英文品名、可使用食品範圍、使用目的與方法、最大使用量與殘留量、必要時附加限制。"},
+  {id:"x33", topic:"必考焦點", q:"JECFA 針對 3-MCPD 所訂之每日容許攝取量 (ADI) 為？", opts:["A) 0.4 µg/kg bw/day","B) 2 µg/kg bw/day","C) 20 µg/kg bw/day","D) 2 mg/kg bw/day"], ans:"B", note:"JECFA 制定 3-MCPD 之 ADI = 2 µg/kg bw/day。台灣醬油標準 ≤ 0.4 ppm。"},
+  {id:"x34", topic:"必考焦點", q:"下列何者不是國際上常用的食品安全風險評估名詞？", opts:["A) ADI (每日容許攝取量)","B) GRAS (一般認為安全)","C) MRL (最大殘留容許量)","D) GDP (國內生產毛額)"], ans:"D", note:"GRAS = Generally Recognized as Safe (美國 FDA 認定). MRL = Maximum Residue Limit 由 ADI 推導。GDP 與食品安全評估無關。"},
+  {id:"x35", topic:"必考焦點", q:"去水醋酸 (Dehydroacetic acid) 作為防腐劑之特性為何？", opts:["A) 毒性較強，使用範圍較限制","B) 完全無毒","C) 抗菌力最弱","D) 可任意添加於所有食品"], ans:"A", note:"去水醋酸毒性較其他防腐劑強，僅限於乳酪、奶油等特定食品使用。"},
+  {id:"x36", topic:"必考焦點", q:"Nisin 作為天然防腐劑之抗菌範圍限制為何？", opts:["A) 僅對 G⁺ 菌有效，對 G⁻ 菌效果有限","B) 僅對真菌有效","C) 對所有微生物皆有效","D) 僅對病毒有效"], ans:"A", note:"Nisin 對 G⁺ 菌 (含孢子) 有效，但對 G⁻ 菌效果有限，因 G⁻ 菌外膜屏障阻礙 Nisin 作用。"},
+  {id:"x37", topic:"必考焦點", q:"亞硝酸鈉在食品添加物中的使用限制為何？", opts:["A) 可用於嬰兒食品補充營養","B) 禁止使用於嬰兒食品","C) 無任何使用限制","D) 僅能用於飲料"], ans:"B", note:"亞硝酸鈉禁止使用於嬰兒食品，因可能生成亞硝胺致癌物，且嬰兒代謝能力尚未成熟。"},
+  {id:"x38", topic:"必考焦點", q:"下列何者為我國食品添加物分類中，品項數量最多的類別？", opts:["A) 防腐劑","B) 營養添加劑","C) 香料","D) 調味劑"], ans:"B", note:"營養添加劑 (122項) 加上香料 (90項) 為品項最多的兩大類。TFDA 17+1 分類共數百項。"},
+  {id:"x39", topic:"必考焦點", q:"食品安全性評估中的「預防原則 (Precautionary Principle)」意指？", opts:["A) 有科學疑慮時以消費者保護為優先","B) 僅在有明確證據時才採取行動","C) 完全禁止任何添加物","D) 由業者自行決定安全性"], ans:"A", note:"預防原則：當科學證據不充分但存在危害疑慮時，應以保護消費者健康為優先考量。"},
+  {id:"x40", topic:"必考焦點", q:"食品安全事件：2008年三聚氰胺事件後，我國最重要的制度改善為何？", opts:["A) 建立食品標示制度","B) 修正蛋白質檢測法 (直接檢測胺基酸)","C) 禁止所有中國進口食品","D) 降低食品添加物標準"], ans:"B", note:"三聚氰胺事件暴露凱氏定氮法之漏洞，改革重點為修正檢測法 (直接測胺基酸含量) 及建立正面表列制度。"},
+  {id:"x41", topic:"必考焦點", q:"2014年劣質豬油事件後，我國導入哪些重要管理制度？", opts:["A) 食品業者登錄制度與廢食用油流向管制","B) 禁用所有豬油","C) 提高進口關稅","D) 廢除食品添加物標準"], ans:"A", note:"劣質豬油事件後，政府建立食品業者登錄、源頭管理、廢食用油流向管制及產品責任險等制度。"},
+  {id:"x42", topic:"必考焦點", q:"2024年米酵菌酸事件中，產生米酵菌酸之菌種為？", opts:["A) Salmonella typhimurium","B) 唐菖蒲伯克氏菌 (Burkholderia gladioli)","C) 大腸桿菌","D) 金黃色葡萄球菌"], ans:"B", note:"米酵菌酸為唐菖蒲伯克氏菌 (Burkholderia gladioli) 於變質發酵米製品中代謝產生。"},
+  {id:"x43", topic:"必考焦點", q:"肉毒桿菌毒素之 LD₅₀ 約為多少？", opts:["A) 1 mg/kg","B) 1 ng/kg","C) 100 mg/kg","D) 1 g/kg"], ans:"B", note:"肉毒桿菌毒素 LD₅₀ ≈ 1 ng/kg (ng = 奈克 = 10⁻⁹ g)，是目前已知毒性最強的物質，毒性分級為極毒 (<1 mg/kg)。"},
+  {id:"x44", topic:"必考焦點", q:"對基因毒性致癌物 (如 Acrylamide)，國際上常採用何種風險評估方法？", opts:["A) ADI 法","B) 邊際暴露量 (MOE) 法","C) LD₅₀ 換算法","D) 動物體重換算法"], ans:"B", note:"MOE (Margin of Exposure) 用於基因毒性致癌物，因無安全閾值，無法以 ADI 評估。MOE = NOAEL / 人類暴露量。"},
+  {id:"x45", topic:"必考焦點", q:"BHA (二丁基羥基甲苯) 在食品添加物中屬於哪一類？", opts:["A) 防腐劑","B) 抗氧化劑","C) 調味劑","D) 著色劑"], ans:"B", note:"BHA 及 BHT 皆為合成抗氧化劑，常用於油脂及含油食品，防止油脂氧化酸敗。"},
+  {id:"x46", topic:"必考焦點", q:"反式脂肪酸對血脂之影響為何？", opts:["A) LDL↑ HDL↑","B) LDL↑ HDL↓","C) LDL↓ HDL↓","D) LDL↓ HDL↑"], ans:"B", note:"反式脂肪同時升高壞膽固醇 (LDL)、降低好膽固醇 (HDL)，雙重危害心血管健康。"},
+  {id:"x47", topic:"必考焦點", q:"丙烯醯胺 (Acrylamide) 之生成與加工條件的關係，下列何者正確？", opts:["A) 溫度越高、時間越長、pH越低 → 生成量越高","B) 溫度越低、時間越長 → 生成量越高","C) 僅與 pH 有關","D) 僅與時間有關"], ans:"A", note:"Acrylamide 生成受多因素影響：溫度越高 (>120℃)、時間越長、pH 越低，生成量越高。"},
+  {id:"x48", topic:"必考焦點", q:"下列何者不是加工助劑 (Processing Aid) 之例子？", opts:["A) 己烷用於油脂萃取","B) 消泡劑","C) 過氧化氫用於殺菌後去除","D) 阿斯巴甜"], ans:"D", note:"加工助劑如己烷 (萃取溶劑)、消泡劑、過氧化氫 (殺菌後分解)，在最終產品不具功能且殘留極低。阿斯巴甜為食品添加物 (甜味劑)。"},
+  {id:"x49", topic:"必考焦點", q:"食品中 EDI (實際每日攝取量) 若大於 ADI，政府應採取何種風險管理措施？", opts:["A) 不需任何行動","B) 降低食品中該物質含量、修正法規標準、公告消費警訊","C) 停止所有食品生產","D) 僅發布新聞"], ans:"B", note:"當 EDI > ADI 時，政府應：降低食品中含量 (源頭管理)、修正限量標準、發布消費警訊、加強監測。"},
+  {id:"x50", topic:"必考焦點", q:"阿斯巴甜 (Aspartame) 之熱穩定性為何？", opts:["A) 非常穩定可耐高溫","B) pH 3~5 穩定，高溫不穩定不適合烘焙","C) 僅在鹼性穩定","D) 完全不受溫度影響"], ans:"B", note:"阿斯巴甜在 pH 3~5 (酸性) 最穩定，但高溫下易分解，因此不適合用於烘焙食品。"},
+  {id:"x51", topic:"必考焦點", q:"下列哪種食品添加物歸類為「粘稠劑」？", opts:["A) 羧甲基纖維素鈉 (CMC)","B) 苯甲酸","C) 維生素C","D) 糖精"], ans:"A", note:"CMC (羧甲基纖維素鈉)、Carrageenan (鹿角菜膠)、Xanthan gum (三仙膠) 均屬粘稠劑。"},
+  {id:"x52", topic:"必考焦點", q:"IARC 致癌物分類中，Group 3 代表？", opts:["A) 確定人類致癌物","B) 很可能人類致癌物","C) 可能人類致癌物","D) 無法判斷為人類致癌物"], ans:"D", note:"Group 1 確定 (BaP)｜2A 很可能 (Acrylamide)｜2B 可能 (咖啡酸)｜3 無法判定 (咖啡因)。"},
+];
+
+// ===================================================================
+// ESSAY QUESTIONS — for hand-writing practice (問答題/申論題)
+// ===================================================================
+const ESSAY_Q = [
+  {
+    id:"e1", topic:"加工危害物質比較",
+    q:"請比較 PAHs、HCAs、Acrylamide 三種加工危害物質的生成機制、主要健康危害及管制方式。",
+    hint:"從生成溫度、前驅物、IARC分類、控制方法四個面向進行系統比較",
+    modelAnswer:`【PAHs – 多環芳香烴】
+• 生成條件：有機物 >400°C 缺氧不完全燃燒（燒烤、煙燻）
+• 代表性物質：Benzo[a]pyrene (BaP)
+• IARC 分類：Group 1（確定人類致癌物）
+• 健康危害：經 CYP1A1 代謝活化為 BPDE → DNA 共價鍵結 → 基因突變
+• 管制方式：歐盟限量（嬰兒食品 ≤1 µg/kg）、降低燒烤溫度與時間
+
+【HCAs – 異環胺】
+• 生成條件：胺基酸 + 肌酸 >150°C 烹調肉品（特別是油炸、燒烤）
+• 常見物質：PhIP、IQ、MeIQx
+• IARC 分類：Group 2B（可能人類致癌物）
+• 健康危害：代謝活化後具致突變性
+• 管制方式：微波預處理肉類降低前驅物、降低烹調溫度、增加翻動頻率、搭配抗氧化食材
+
+【Acrylamide – 丙烯醯胺】
+• 生成條件：天門冬醯胺 Asparagine + 還原糖 >120°C 梅納反應
+• 常見食品：薯條、洋芋片、咖啡、餅乾、早餐穀片
+• IARC 分類：Group 2A（很可能人類致癌物）
+• 健康危害：經 P450 代謝為 Glycidamide（環氧丙醯胺）→ DNA/Protein adduct
+• 管制方式：添加 Asparaginase 分解天門冬醯胺前驅物、控制油炸溫度與時間`
+  },
+  {
+    id:"e2", topic:"毒性試驗與安全性評估",
+    q:"食品安全性評估中：\n(1) 毒性試驗的四個層級為何？請說明各層級的試驗期間與目的。\n(2) ADI 如何推導？請寫出公式並說明各參數意義。\n(3) 暴露評估的三步驟為何？若 EDI > ADI 應如何處理？",
+    hint:"層級順序：急性→亞急性(28天)→亞慢性(90天)→慢性(2年)。ADI公式 = NOAEL/SF。暴露：TMDI→EDI→風險管理",
+    modelAnswer:`(1) 毒性試驗四層級：
+• 急性毒性（Acute）：單次投予，測定 LD₅₀，了解急毒性強弱
+• 亞急性毒性（Subacute）：28 天重複投予，觀察初期毒性徵兆
+• 亞慢性毒性（Subchronic）：90 天重複投予，測定 NOAEL/LOAEL
+• 慢性毒性/致癌試驗（Chronic）：約 2 年（動物終生），觀察長期毒性及致癌性
+
+(2) ADI 推導：
+ADI = NOAEL ÷ SF
+• NOAEL = 無可見有害作用劑量（No Observed Adverse Effect Level）
+• SF = 100 = 種間差異(10) × 種內個體差異(10)
+• ADI 單位：mg/kg bw/day
+
+(3) 暴露評估三步驟：
+第一步：TMDI（理論每日最大攝取量）
+第二步：EDI（實際每日攝取量）— 考慮真實飲食習慣與含量
+第三步：風險管理 — 比較 EDI 與 ADI
+
+若 EDI > ADI，政府應採取措施：
+降低食品中含量（源頭管理）→ 修正法規限量標準 → 發布消費警訊 → 加強監測`
+  },
+  {
+    id:"e3", topic:"毒理學基礎",
+    q:"(1) 請說明 Paracelsus「The dose makes the poison」對現代毒理學的意義與應用。\n(2) 安全係數 (SF) 為何定為 100？請由種間及種內差異說明。\n(3) 舉例說明 LD₅₀ 的應用與毒性分級標準。",
+    hint:"Paracelsus = 毒理學之父。SF = 10×10。LD₅₀ 分五級",
+    modelAnswer:`(1) Paracelsus 名言：
+• Paracelsus（1493-1541）被譽為「毒理學之父」
+• 「所有物質都是毒，劑量決定它是不是毒」
+• 意義：確立了劑量-反應關係的核心觀念，為現代毒理學及食品安全性評估的基石
+• 應用：毒物閾值（Threshold）概念 → NOAEL/LOAEL 的測定 → ADI 的制定
+
+(2) 安全係數 SF = 100：
+• SF = 種間差異 (10) × 種內差異 (10)
+• 種間差異 (10×)：動物實驗結果外推至人類，因代謝、生理差異
+• 種內差異 (10×)：人類個體間差異（年齡、健康狀況、基因等）
+• 總計 = 10 × 10 = 100
+
+(3) LD₅₀（半數致死劑量）：
+• 使 50% 實驗動物死亡之劑量
+• 毒性分級標準：
+  <1 mg/kg → 極毒（肉毒桿菌毒素 ≈ ng/kg）
+  1~50 → 高毒（氰化物、米酵菌酸 3.16）
+  50~500 → 中毒（咖啡因 ≈190）
+  500~5000 → 低毒（食鹽 ≈3000）
+  >5000 → 相對無害（維生素C ≈11900）`
+  },
+  {
+    id:"e4", topic:"五大加工危害物質",
+    q:"請針對以下五大加工危害物質，以表格方式比較其生成條件、代表物質、管制方式：(1) PAHs (2) HCAs (3) Acrylamide (4) 反式脂肪 (5) 3-MCPD。",
+    hint:"依序從生成溫度、前驅物、主要食品來源、管制方法進行整理",
+    modelAnswer:`五大加工危害物質比較
+
+【PAHs】生成：>400°C 有機物不完全燃燒。代表：BaP。主要來源：燒烤肉類、煙燻食品。管制：降低燒烤溫度、使用天然抗氧化醃漬、歐盟限量管制（BaP ≤1~10 µg/kg）
+【HCAs】生成：>150°C 胺基酸+肌酸。代表：PhIP。主要來源：高溫烹調肉品。管制：微波預處理、降低溫度、增加翻動頻率
+【Acrylamide】生成：>120°C Asparagine+還原糖(梅納)。代表：丙烯醯胺。主要來源：薯條、咖啡、餅乾。管制：Asparaginase 酵素處理、溫度控制
+【反式脂肪】生成：油脂部分氫化。代表：反式脂肪酸。主要來源：氫化油、烘焙食品。管制：標示強制化、每份<0.5g 可標示0
+【3-MCPD】生成：酸水解植物蛋白+氯離子。代表：3-氯-1,2-丙二醇。主要來源：化學醬油。管制：台灣醬油 ≤0.4 ppm、JECFA ADI = 2 µg/kg`
+  },
+  {
+    id:"e5", topic:"食品添加物管理",
+    q:"(1) 請比較正面表列 (Positive List) 與負面表列制度的差異。\n(2) Clean Label（清淨標示）運動對食品產業帶來的三大挑戰是什麼？\n(3) 加工助劑 (Processing Aid) 與食品添加物有何不同？請舉例說明。",
+    hint:"正面表列：未列者禁用。清淨標示：減少添加物使用",
+    modelAnswer:`(1) 正面表列 vs 負面表列：
+• 正面表列（Positive List）：僅允許列表中指定的添加物於限定範圍及限量使用，未列者一律禁用 → 台灣、歐盟採用
+• 負面表列：僅限制特定有害物質，未限制者原則上可使用 → 風險較高
+
+(2) Clean Label 三大挑戰：
+① 保存期限縮短 — 減少防腐劑後產品易變質
+② 質地口感改變 — 減少乳化劑、粘稠劑後口感受影響
+③ 成本上升 — 天然替代品價格較高
+
+(3) 加工助劑 vs 食品添加物：
+• 加工助劑：加工中添加，最終產品中不具功能、殘留極低 → 不須標示（己烷、消泡劑）
+• 食品添加物：最終產品中具技術功能 → 須依規定標示（阿斯巴甜、苯甲酸）`
+  },
+  {
+    id:"e6", topic:"食品安全事件與改革",
+    q:"請說明以下四個重大食品安全事件之時間、成因、危害物質及後續改革成效：\n(1) 2008 年三聚氰胺事件\n(2) 2011 年塑化劑事件\n(3) 2014 年劣質豬油事件\n(4) 2024 年米酵菌酸事件",
+    hint:"分別從年份、原因、危害物、改革措施四個面向回答",
+    modelAnswer:`(1) 2008 三聚氰胺事件：
+• 原因：添加三聚氰胺偽裝蛋白質（凱氏定氮法漏洞）
+• 危害物：三聚氰胺 → 腎結石、急性腎衰竭
+• 改革：直接檢測胺基酸含量、正面表列制度
+
+(2) 2011 塑化劑事件：
+• 原因：DEHP 取代棕櫚油作為起雲劑
+• 危害物：DEHP → 內分泌干擾
+• 改革：三級品管制度、源頭管理
+
+(3) 2014 劣質豬油事件：
+• 原因：回收廢食用油再製
+• 危害物：氧化酸敗產物
+• 改革：食品業者登錄、廢食用油流向管制、產品責任險
+
+(4) 2024 米酵菌酸事件（寶林茶室）：
+• 原因：變質發酵米製品中唐菖蒲伯克氏菌代謝產物
+• 危害物：米酵菌酸 → 抑制粒線體 ADP/ATP 轉運酶
+• 改革：加強發酵米製品監測`
+  },
+  {
+    id:"e7", topic:"IARC分類與風險溝通",
+    q:"(1) 請說明 IARC 致癌物分類系統（Group 1 ~ Group 3）及舉例。\n(2) 何謂 MOE（邊際暴露量）？適用於何種情況？\n(3) 風險分析三大架構為何？各自的角色與功能說明。",
+    hint:"Group 1 確定 → 3 無法判定。MOE 用於基因毒性致癌物。風險分析 = 評估 + 管理 + 溝通",
+    modelAnswer:`(1) IARC 致癌物分類：
+• Group 1：確定人類致癌物 — BaP（苯並[a]芘）
+• Group 2A：很可能人類致癌物 — Acrylamide（丙烯醯胺）
+• Group 2B：可能人類致癌物 — 咖啡酸、PhIP
+• Group 3：無法判定為人類致癌物 — 咖啡因
+
+(2) MOE（邊際暴露量）= NOAEL ÷ 人類實際暴露量
+• 用於基因毒性致癌物（無安全閾值，無法使用 ADI）
+• MOE 越大越安全；若 MOE < 10,000 需優先進行風險管理
+
+(3) 風險分析三大架構：
+① 風險評估（科學家）：危害辨識→劑量反應→暴露評估→風險特性描述
+② 風險管理（政府）：政策制定、法規標準
+③ 風險溝通（業者+政府+消費者）：資訊透明、公眾參與`
+  },
+  {
+    id:"e8", topic:"食品添加物各論",
+    q:"請說明以下食品添加物的功能、機制與重要特性：\n(1) 亞硝酸鈉（保色劑/防腐劑）\n(2) Nisin（天然防腐劑）\n(3) 阿斯巴甜（甜味劑）\n(4) BHA/BHT（抗氧化劑）",
+    hint:"分別從化學性質、作用機制、使用限制說明",
+    modelAnswer:`(1) 亞硝酸鈉 NaNO₂：
+• 功能：保色劑 + 防腐劑（雙重功能）
+• 保色：與肌紅蛋白反應 → 生成亞硝基肌紅蛋白（紅色）
+• 抑菌：~100 ppm 抑制肉毒桿菌孢子萌發
+• 限制：禁⽌使用於嬰兒食品
+
+(2) Nisin（乳酸鏈球菌素）：
+• 天然防腐劑（乳酸鏈球菌發酵產生）
+• 機制：在 G⁺ 菌細胞膜形成孔洞 → 離子洩漏 → 細胞死亡
+• 限制：僅對 G⁺ 菌有效，對 G⁻ 菌及真菌無效
+
+(3) 阿斯巴甜 Aspartame：
+• 甜度為蔗糖 200 倍
+• PKU 患者無法代謝（含苯丙胺酸）→ 須標示警語
+• pH 3~5 最穩定，高溫不穩定 → 不適合烘焙
+
+(4) BHA/BHT（合成抗氧化劑）：
+• 防止油脂氧化酸敗 → 延長保存期限
+• 機制：提供氫離子中斷自由基連鎖反應`
+  },
+  {
+    id:"e9", topic:"新興加工危害物質",
+    q:"請詳述 3-MCPD 與 Glycidyl esters（縮水甘油酯）的生成機制、汙染食品種類、健康危害及國內外管制現況。",
+    hint:"油脂精煉 >200°C 產生。3-MCPD 異構物：3-MCPD, 2-MCPD, 1,3-DCP",
+    modelAnswer:`【3-MCPD（3-氯-1,2-丙二醇）】
+• 生成：酸水解植物蛋白 + 氯離子在高溫下反應；油脂精煉亦會產生
+• 食品：化學醬油、蠔油、湯塊
+• 異構物：3-MCPD、2-MCPD、1,3-DCP（毒性更高）
+• 危害：腎毒性、睪丸毒性，IARC Group 2B
+• 管制：台灣醬油 ≤0.4 ppm；JECFA ADI = 2 µg/kg bw/day
+
+【Glycidyl esters（縮水甘油酯）】
+• 生成：油脂精煉 >200°C
+• 食品：精煉植物油、嬰兒奶粉（棕櫚油配方）
+• 危害：水解為縮水甘油 Glycidol，IARC Group 2A 致癌物
+• 管制：歐盟嬰兒奶粉 ≤1 mg/kg`
+  },
+  {
+    id:"e10", topic:"未來展望與倫理",
+    q:"(1) 未來十年食品安全管理面臨的三項重大挑戰是什麼？\n(2) 如果你是一位品管經理，發現公司產品有潛在食安疑慮但尚未有相關法規，你應如何倫理處理？",
+    hint:"挑戰：新興危害、供應鏈全球化、科技食品。倫理：以消費者保護為優先",
+    modelAnswer:`(1) 未來十年三項挑戰：
+① 新興加工危害物質的辨識與管理（Glycidyl esters、微塑膠等）
+② 全球化供應鏈的風險管理（追溯困難、跨境事件頻傳）
+③ 新興食品科技的監管（基因編輯、細胞培養肉）
+
+(2) 品管經理倫理處理：
+① 通報上級並啟動內部調查
+② 依預防原則以消費者保護為優先
+③ 自主暫停出貨或主動回收
+④ 委託第三方風險評估
+⑤ 透明溝通（向主管機關報告、向消費者說明）
+⑥ 內部改善方案調整配方或製程
+
+核心：消費者安全永遠優先於企業短期利益。`
+  },
+];
+
+// Stage info config
+const STAGES = [
+  {id:0, name:"第一份模擬卷", desc:"傳統題型｜選擇+填空", icon:"📝", data:STAGE0_Q},
+  {id:1, name:"第二份模擬卷", desc:"2026新式｜情境整合", icon:"📋", data:STAGE1_Q},
+  {id:2, name:"衝刺遊戲·題庫", desc:"精選題庫隨機抽考", icon:"⚡", data:STAGE2_Q},
+  {id:3, name:"衝刺遊戲·記憶口訣", desc:"數字填空強化記憶", icon:"🧠", data:STAGE3_Q},
+  {id:4, name:"總複習關卡", desc:"三種模式科學複習", icon:"📚", data:null},
+  {id:5, name:"補充題庫·歷屆考題", desc:"52題精選補充+歷屆", icon:"📖", data:STAGE5_Q},
+];
+
+// Stage 4 sub-modes
+const REVIEW_MODES = [
+  {id:"flashcard", name:"閃卡瀏覽", icon:"🃏", desc:"快速瀏覽34張重點卡"},
+  {id:"weakness", name:"弱點檢測", icon:"🎯", desc:"只考曾經答錯的題目"},
+  {id:"mock", name:"綜合模考", icon:"📝", desc:"跨關卡隨機20題模擬考"},
+];
+
+// ===================================================================
+// GAME STATE
+// ===================================================================
+let state = {
+  currentStage: -1,       // 0-4
+  currentMode: "quiz",   // quiz, flashcard
+  currentIndex: 0,
+  questions: [],
+  filteredQuestions: [],
+  answers: [],
+  score: 0,
+  total: 0,
+  wrongIds: [],
+  flashcardDone: [],
+  flashcardDontKnow: [],
+  isConfirmed: false,
+  stageCompleted: [false, false, false, false, false, false],
+  stageScores: [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]],
+  timerInterval: null,
+  seconds: 0,
+  retryMode: false,
+};
+
+// ===================================================================
+// UTILITY
+// ===================================================================
+function shuffle(a) {for(let i=a.length-1;i>0;i--){let j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+
+// Smart stratified sampling: picks n questions from pool ensuring
+// proportional topic coverage + interleaved ordering
+function smartSample(pool, n){
+  if(pool.length <= n) return interleaveTopics(shuffle([...pool]));
+  // Group by topic
+  const groups = {};
+  for(const q of pool){
+    const t = q.topic || '其他';
+    if(!groups[t]) groups[t] = [];
+    groups[t].push(q);
+  }
+  const topics = Object.keys(groups);
+  // Shuffle within each topic group
+  for(const t of topics) groups[t] = shuffle(groups[t]);
+  // Proportional allocation
+  const result = [];
+  const alloc = {};
+  let allocated = 0;
+  for(const t of topics){
+    const share = Math.max(1, Math.floor(n * groups[t].length / pool.length));
+    alloc[t] = share;
+    allocated += share;
+  }
+  // Adjust if over/under allocated
+  let diff = n - allocated;
+  const sorted = [...topics].sort((a,b) => groups[b].length - groups[a].length);
+  while(diff > 0){
+    for(const t of sorted){
+      if(diff <= 0) break;
+      if(alloc[t] < groups[t].length){ alloc[t]++; diff--; }
+    }
+  }
+  while(diff < 0){
+    let couldReduce = false;
+    for(const t of [...sorted].reverse()){
+      if(diff >= 0) break;
+      if(alloc[t] > 1){ alloc[t]--; diff++; couldReduce = true; }
+    }
+    if(!couldReduce) break;
+  }
+  // Collect from each group
+  for(const t of topics){
+    const take = Math.min(alloc[t], groups[t].length);
+    result.push(...groups[t].slice(0, take));
+  }
+  return interleaveTopics(shuffle(result));
+}
+
+// Interleave topics: reorder to minimize adjacent same-topic questions
+function interleaveTopics(arr){
+  if(arr.length <= 2) return arr;
+  const groups = {};
+  for(const q of arr){
+    const t = q.topic || '其他';
+    if(!groups[t]) groups[t] = [];
+    groups[t].push(q);
+  }
+  // Sort topics by count descending, shuffle within each
+  const entries = Object.entries(groups).map(([t, qs]) => [t, shuffle(qs)]);
+  entries.sort((a,b) => b[1].length - a[1].length);
+  const result = [];
+  let remaining = arr.length;
+  const indices = {};
+  for(const [t] of entries) indices[t] = 0;
+  let lastTopic = null;
+  while(remaining > 0){
+    let picked = false;
+    for(const [t, qs] of entries){
+      if(indices[t] >= qs.length) continue;
+      if(t === lastTopic && remaining > 1){
+        // Check if any other topic still has items
+        const othersLeft = entries.some(([t2, qs2]) => t2 !== t && indices[t2] < qs2.length);
+        if(othersLeft) continue;
+      }
+      result.push(qs[indices[t]++]);
+      lastTopic = t;
+      remaining--;
+      picked = true;
+      break;
+    }
+    if(!picked) break; // safety
+  }
+  return result;
+}
+
+function $(id){return document.getElementById(id)}
+
+// Save/load progress
+function saveProgress(){
+  try{
+    const s = {completed:state.stageCompleted, scores:state.stageScores, wrongs:state.wrongIds};
+    localStorage.setItem('fsa_review_progress', JSON.stringify(s));
+  }catch(e){}
+}
+function loadProgress(){
+  try{
+    const d = JSON.parse(localStorage.getItem('fsa_review_progress'));
+    if(d){
+      state.stageCompleted = d.completed || [false,false,false,false,false,false];
+      state.stageScores = d.scores || [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]];
+      state.wrongIds = d.wrongs || [];
+    }
+  }catch(e){}
+}
+
+// ===================================================================
+// MENU
+// ===================================================================
+function updateMenu(){
+  let done = 0;
+  for(let i=0;i<6;i++){
+    const mc = $(`menuCard${i}`);
+    const ms = $(`menuStatus${i}`);
+    if(state.stageCompleted[i]){
+      if(i !== 2 && i !== 5) mc.classList.add('completed');
+      ms.textContent = `✅ ${state.stageScores[i][0]}/${state.stageScores[i][1]} 正確`;
+      done++;
+    } else {
+      mc.classList.remove('completed');
+      ms.textContent = '▶ 開始挑戰';
+    }
+  }
+  $('totalProgress').textContent = `完成進度：${done} / 6 關卡`;
+}
+
+function showMenu(){
+  $('mainMenu').classList.add('active');
+  $('gameScreen').classList.remove('active');
+  updateMenu();
+}
+
+function backToMenu(){
+  stopTimer();
+  $('gameScreen').classList.remove('active');
+  $('mainMenu').classList.add('active');
+  updateMenu();
+  saveProgress();
+}
+
+// ===================================================================
+// STAGE LAUNCH
+// ===================================================================
+function startStage(idx){
+  state.currentStage = idx;
+  $('mainMenu').classList.remove('active');
+  $('gameScreen').classList.add('active');
+
+  if(idx === 4){
+    showReviewMenu();
+    return;
+  }
+
+  if(idx === 5){
+    showTopicPracticeMenu();
+    return;
+  }
+
+  const st = STAGES[idx];
+  let qs = [...st.data];
+
+  state.retryMode = false;
+
+  // For stage 2, smart 10 questions (stratified by topic, interleaved)
+  if(idx === 2){
+    qs = smartSample(qs, 10);
+  }
+
+  // For stage 3, smart 10 memory items (interleaved)
+  if(idx === 3){
+    qs = smartSample(qs, 10);
+  }
+
+  state.questions = qs;
+  state.filteredQuestions = qs;
+  state.currentIndex = 0;
+  state.score = 0;
+  state.total = qs.length;
+  state.answers = [];
+  state.isConfirmed = false;
+  state.currentMode = "quiz";
+  $('stageTitle').textContent = `${st.icon} ${st.name}`;
+  $('flashcardArea').style.display = 'none';
+  $('quizArea').style.display = 'block';
+  $('resultArea').style.display = 'none';
+  $('filterTags').style.display = 'none';
+  $('actionBtns').style.display = 'flex';
+
+  startTimer();
+  renderQuestion();
+}
+
+// ===================================================================
+// STAGE 5: TOPIC PRACTICE MENU
+// ===================================================================
+function showTopicPracticeMenu(){
+  state.currentMode = "review";
+  $('stageTitle').textContent = '📖 補充題庫·主題式練習';
+  $('flashcardArea').style.display = 'none';
+  $('quizArea').style.display = 'block';
+  $('resultArea').style.display = 'none';
+  $('progressFill').style.width = '0%';
+  $('stageScore').textContent = '選擇模式';
+  stopTimer();
+
+  // Collect all topics and counts
+  const allQ = [...STAGE0_Q, ...STAGE1_Q, ...STAGE2_Q, ...STAGE3_Q, ...STAGE5_Q];
+  const topicMap = {};
+  for(const q of allQ){
+    const t = q.topic || '其他';
+    if(!topicMap[t]) topicMap[t] = [];
+    topicMap[t].push(q);
+  }
+
+  let html = '<div style="text-align:center;padding:8px 0">';
+  html += '<p style="font-size:15px;margin-bottom:12px">選擇一種練習模式</p></div>';
+
+  // Sub-mode buttons
+  html += '<div class="review-sub" style="margin-bottom:16px">';
+  html += '<div class="review-sub-card" onclick="startStage5QuizAll()"><div style="font-size:28px">📖</div><div class="rsc-name">補充題庫全測</div><div style="font-size:10px;color:#888">52題精選，隨機抽10題</div></div>';
+  html += '<div class="review-sub-card" onclick="startPastExamQuiz()"><div style="font-size:28px">📋</div><div class="rsc-name">歷屆考題特區</div><div style="font-size:10px;color:#888">歷屆考題主題專測</div></div>';
+  html += '<div class="review-sub-card" onclick="startEssayPractice()"><div style="font-size:28px">✍️</div><div class="rsc-name">手寫題練習</div><div style="font-size:10px;color:#888">10題申論/問答練習</div></div>';
+  html += '</div>';
+
+  // Topic selection cards
+  html += '<div style="font-size:14px;font-weight:600;margin-bottom:8px;text-align:center">📂 選擇主題練習：</div>';
+  html += '<div class="review-sub">';
+  const sortedTopics = Object.keys(topicMap).sort();
+  for(const t of sortedTopics){
+    const count = topicMap[t].length;
+    const emojiMap = {
+      '加工危害物質':'🔥','食品添加物':'🧪','毒理學':'💊','時事與法規':'📰',
+      '新興時事':'📰','毒理學進階':'💊','食品添加物進階':'🧪','加工危害進階':'🔥',
+      '歷屆考題':'📋','法規標準':'⚖️','HLB':'💧','甜味劑':'🍬','LD50分級':'💀',
+      '安全係數':'🔢','生成溫度':'🌡️','ADI計算':'🧮','毒性試驗':'🔬',
+      '暴露評估':'📊','名詞解釋':'📖','計算':'🧮','時事':'📰',
+      '法規動態':'📰','食品安全文化':'🏛️','食品接觸材料':'🧴',
+      '新興危害':'⚠️','名詞縮寫':'📝','時事與法規':'📰',
+      '加工危害物質':'🔥','食品添加物':'🧪','毒理學':'💊',
+    };
+    const emoji = emojiMap[t] || '📌';
+    html += `<div class="review-sub-card" onclick="startTopicQuiz('${t}')">
+      <div style="font-size:24px">${emoji}</div>
+      <div class="rsc-name">${t}</div>
+      <div style="font-size:10px;color:#888">${count} 題</div>
+    </div>`;
+  }
+  html += '</div><div class="btn-group" style="margin-top:16px">';
+  html += '<button class="btn btn-outline" onclick="backToMenu()">🏠 回主選單</button></div>';
+
+  $('qText').innerHTML = html;
+  $('optionsArea').style.display = 'none';
+  $('blankArea').style.display = 'none';
+  $('qTopic').style.display = 'none';
+  $('qNote').style.display = 'none';
+  $('actionBtns').style.display = 'none';
+  $('timerDisplay').textContent = '';
+}
+
+function startStage5QuizAll(){
+  let qs = smartSample(STAGE5_Q, 10);
+  launchStage5Quiz(qs, '📖 補充題庫全測');
+}
+
+function startPastExamQuiz(){
+  let qs = smartSample(STAGE5_Q.filter(q => q.topic === '歷屆考題'), 10);
+  if(qs.length === 0){alert('暫無歷屆考題');return;}
+  launchStage5Quiz(qs, '📋 歷屆考題特區');
+}
+
+function startTopicQuiz(topic){
+  const allQ = [...STAGE0_Q, ...STAGE1_Q, ...STAGE2_Q, ...STAGE3_Q, ...STAGE5_Q];
+  let qs = allQ.filter(q => (q.topic || '其他') === topic);
+  qs = smartSample(qs, Math.min(qs.length, 10));
+  if(qs.length === 0){alert('該主題暫無題目');return;}
+  launchStage5Quiz(qs, `📂 ${topic}`);
+}
+
+function launchStage5Quiz(qs, title){
+  state.currentStage = 5;
+  state.questions = qs;
+  state.filteredQuestions = qs;
+  state.currentIndex = 0;
+  state.score = 0;
+  state.total = qs.length;
+  state.answers = [];
+  state.isConfirmed = false;
+  state.currentMode = "quiz";
+  $('stageTitle').textContent = title;
+  $('flashcardArea').style.display = 'none';
+  $('quizArea').style.display = 'block';
+  $('resultArea').style.display = 'none';
+  $('filterTags').style.display = 'none';
+  $('qTopic').style.display = 'inline-block';
+  $('actionBtns').style.display = 'flex';
+  startTimer();
+  renderQuestion();
+}
+function showReviewMenu(){
+  state.currentMode = "review";
+  $('stageTitle').textContent = '📚 總複習關卡';
+  $('flashcardArea').style.display = 'none';
+  $('quizArea').style.display = 'block';
+  $('resultArea').style.display = 'none';
+  $('progressFill').style.width = '0%';
+  $('stageScore').textContent = '選擇複習模式';
+
+  let html = '<div style="text-align:center;padding:20px 0">';
+  html += '<p style="font-size:15px;margin-bottom:4px">總複習關卡包含三種模式，幫助你科學化複習</p>';
+  html += '<p style="font-size:13px;color:#888">先閃卡瀏覽 → 再弱點檢測 → 最後綜合模考</p></div>';
+
+  html += '<div class="review-sub">';
+  for(const rm of REVIEW_MODES){
+    let extra = '';
+    if(rm.id === 'weakness' && state.wrongIds.length === 0) extra = ' (尚無錯題，先玩其他關卡)';
+    if(rm.id === 'flashcard') extra = ` (${STAGE4_FLASHCARDS.length}張卡)`;
+    html += `<div class="review-sub-card" onclick="startReviewMode('${rm.id}')">
+      <div class="rsc-icon">${rm.icon}</div>
+      <div class="rsc-name">${rm.name}</div>
+      <div style="font-size:10px;color:#888">${rm.desc}${extra}</div>
+    </div>`;
+  }
+  html += '</div>';
+
+  html += '<div class="btn-group" style="margin-top:20px">';
+  html += '<button class="btn btn-outline" onclick="backToMenu()">🏠 回主選單</button>';
+  html += '</div>';
+
+  $('qText').innerHTML = html;
+  $('optionsArea').style.display = 'none';
+  $('blankArea').style.display = 'none';
+  $('qTopic').style.display = 'none';
+  $('qNote').style.display = 'none';
+  $('actionBtns').style.display = 'none';
+  $('timerDisplay').textContent = '';
+  stopTimer();
+}
+
+function startReviewMode(mode){
+  if(mode === 'flashcard') startFlashcardReview();
+  else if(mode === 'weakness') startWeaknessTest();
+  else if(mode === 'mock') startComprehensiveMock();
+}
+
+// ===================================================================
+// FLASHCARD REVIEW
+// ===================================================================
+function startFlashcardReview(){
+  state.currentMode = "flashcard";
+  state.questions = shuffle([...STAGE4_FLASHCARDS]);
+  state.currentIndex = 0;
+  state.flashcardDone = [];
+  state.flashcardDontKnow = [];
+  $('stageTitle').textContent = '🃏 總複習·閃卡瀏覽';
+  $('quizArea').style.display = 'none';
+  $('flashcardArea').style.display = 'block';
+  $('resultArea').style.display = 'none';
+  $('progressFill').style.width = '0%';
+  startTimer();
+  renderFlashcard();
+}
+
+function renderFlashcard(){
+  if(state.currentIndex >= state.questions.length){
+    stopTimer();
+    showReviewMenu();
+    return;
+  }
+  const card = state.questions[state.currentIndex];
+  $('fcFront').textContent = card.front;
+  $('fcBack').textContent = card.back;
+  $('fcBack').classList.remove('show');
+  document.querySelector('#flashcard .fc-hint').textContent = '👆 點擊翻面 · 知道按 ✅ · 不知道按 ❌';
+  $('fcProgress').textContent = `${state.currentIndex} / ${state.questions.length}`;
+  $('progressFill').style.width = `${(state.currentIndex/state.questions.length)*100}%`;
+}
+
+function flipCard(){
+  $('fcBack').classList.toggle('show');
+}
+
+function flashcardKnow(){
+  state.flashcardDone.push(state.questions[state.currentIndex]);
+  state.currentIndex++;
+  renderFlashcard();
+}
+
+function flashcardDontKnow(){
+  state.flashcardDontKnow.push(state.questions[state.currentIndex]);
+  state.currentIndex++;
+  renderFlashcard();
+}
+
+// ===================================================================
+// WEAKNESS TEST
+// ===================================================================
+function startWeaknessTest(){
+  // Collect all wrong questions from all stages
+  let allQ = [...STAGE0_Q, ...STAGE1_Q, ...STAGE2_Q, ...STAGE3_Q, ...STAGE5_Q];
+  let weakQ = allQ.filter(q => state.wrongIds.includes(q.id));
+  if(weakQ.length === 0){
+    alert('目前沒有錯題記錄！請先完成其他關卡產生錯題。');
+    showReviewMenu();
+    return;
+  }
+  weakQ = smartSample(weakQ, weakQ.length);
+  state.questions = weakQ;
+  state.filteredQuestions = weakQ;
+  state.currentIndex = 0;
+  state.score = 0;
+  state.total = weakQ.length;
+  state.answers = [];
+  state.isConfirmed = false;
+  state.currentMode = "quiz";
+  $('stageTitle').textContent = `🎯 總複習·弱點檢測 (${weakQ.length}題)`;
+  $('flashcardArea').style.display = 'none';
+  $('quizArea').style.display = 'block';
+  $('resultArea').style.display = 'none';
+  $('filterTags').style.display = 'none';
+  $('qTopic').style.display = 'inline-block';
+  $('actionBtns').style.display = 'flex';
+  renderQuestion();
+}
+
+// ===================================================================
+// COMPREHENSIVE MOCK
+// ===================================================================
+function startComprehensiveMock(){
+  let pool = [];
+  // Take questions from all sources
+  const s0 = shuffle([...STAGE0_Q]).filter(q => !q.type || q.type !== 'blank').slice(0, 4);
+  const s1 = shuffle([...STAGE1_Q]).filter(q => !q.type || q.type !== 'blank').slice(0, 4);
+  const s2 = shuffle([...STAGE2_Q]).slice(0, 5);
+  const s3 = shuffle([...STAGE3_Q]).slice(0, 2);
+  const s5 = shuffle([...STAGE5_Q]).slice(0, 5);
+  pool = [...s0, ...s1, ...s2, ...s3, ...s5];
+  pool = shuffle(pool);
+  pool = smartSample(pool, 20);
+
+  state.questions = pool;
+  state.filteredQuestions = pool;
+  state.currentIndex = 0;
+  state.score = 0;
+  state.total = pool.length;
+  state.answers = [];
+  state.isConfirmed = false;
+  state.currentMode = "quiz";
+  $('stageTitle').textContent = `📝 總複習·綜合模考 (${pool.length}題)`;
+  $('flashcardArea').style.display = 'none';
+  $('quizArea').style.display = 'block';
+  $('resultArea').style.display = 'none';
+  $('filterTags').style.display = 'none';
+  $('qTopic').style.display = 'inline-block';
+  $('actionBtns').style.display = 'flex';
+  startTimer();
+  renderQuestion();
+}
+
+// ===================================================================
+// QUIZ RENDERING
+// ===================================================================
+function renderQuestion(){
+  if(state.currentIndex >= state.questions.length){
+    showResults();
+    return;
+  }
+
+  const q = state.questions[state.currentIndex];
+  state.isConfirmed = false;
+
+  // Update progress
+  $('progressFill').style.width = `${(state.currentIndex / state.total) * 100}%`;
+  $('stageScore').textContent = `${state.score} / ${state.currentIndex}`;
+
+  // Topic
+  $('qTopic').style.display = 'inline-block';
+  $('qTopic').textContent = q.topic || '';
+
+  // Question text
+  $('qText').textContent = `${state.currentIndex+1}. ${q.q}`;
+
+  // Options
+  const optArea = $('optionsArea');
+  const blankArea = $('blankArea');
+  const qNote = $('qNote');
+
+  if(q.type === 'blank'){
+    // Fill-in-the-blank mode
+    optArea.style.display = 'none';
+    blankArea.style.display = 'block';
+    $('blankInput').value = '';
+    $('blankInput').disabled = false;
+    $('blankInput').focus();
+  } else {
+    // Multiple choice
+    optArea.style.display = 'flex';
+    blankArea.style.display = 'none';
+    let html = '';
+    for(let o of q.opts){
+      html += `<div class="option" onclick="selectOption(this,'${o[0]}')" data-val="${o[0]}">${o}</div>`;
+    }
+    optArea.innerHTML = html;
+  }
+
+  qNote.style.display = 'none';
+  qNote.className = 'q-note';
+  qNote.textContent = q.note || '';
+
+  // Buttons
+  if(q.type === 'blank'){
+    $('confirmBtn').style.display = 'inline-block';
+    $('confirmBtn').onclick = checkBlank;
+  } else {
+    $('confirmBtn').style.display = 'inline-block';
+    $('confirmBtn').onclick = confirmAnswer;
+  }
+  $('nextBtn').style.display = 'none';
+}
+
+// ===================================================================
+// ANSWER HANDLING
+// ===================================================================
+let selectedOption = null;
+
+function selectOption(el, val){
+  if(state.isConfirmed) return;
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedOption = val;
+}
+
+function confirmAnswer(){
+  if(state.isConfirmed) return;
+
+  const q = state.questions[state.currentIndex];
+
+  if(!selectedOption && !q.type){
+    alert('請先選擇一個答案！');
+    return;
+  }
+
+  state.isConfirmed = true;
+  const isCorrect = selectedOption === q.ans;
+
+  // Mark correct/wrong
+  document.querySelectorAll('.option').forEach(o => {
+    o.classList.add('disabled');
+    if(o.dataset.val === q.ans) o.classList.add('correct');
+    if(o.dataset.val === selectedOption && !isCorrect) o.classList.add('wrong');
+  });
+
+  processResult(isCorrect, q);
+}
+
+function checkBlank(){
+  if(state.isConfirmed) return;
+
+  const q = state.questions[state.currentIndex];
+  const input = $('blankInput');
+  const userAns = input.value.trim();
+
+  if(!userAns){alert('請輸入答案！');return;}
+
+  state.isConfirmed = true;
+  const isCorrect = userAns === q.ans || userAns.toLowerCase() === q.ans.toLowerCase();
+  processResult(isCorrect, q);
+
+  // Lock input after submission
+  input.disabled = true;
+
+  // Show answer result & note inside blankArea
+  input.style.borderColor = isCorrect ? '#6B8F71' : '#C4877A';
+  input.style.borderWidth = '2px';
+
+  const feedbackDiv = document.createElement('div');
+  feedbackDiv.style.cssText = 'text-align:center;margin-top:8px;font-weight:600';
+  if(isCorrect){
+    feedbackDiv.style.color = '#6B8F71';
+    feedbackDiv.textContent = `✅ 正確！答案：${q.ans}`;
+  } else {
+    feedbackDiv.style.color = '#C4877A';
+    feedbackDiv.textContent = `❌ 正確答案：${q.ans}`;
+  }
+  input.parentNode.appendChild(feedbackDiv);
+
+  const noteDiv = document.createElement('div');
+  noteDiv.style.cssText = 'text-align:center;font-size:13px;color:#666;margin-top:8px;background:#FAF9F7;padding:10px;border-radius:8px;border-left:3px solid #8B8B8B';
+  noteDiv.textContent = '💡 ' + (q.note || '無解析');
+  input.parentNode.appendChild(noteDiv);
+}
+
+function processResult(isCorrect, q){
+  state.answers.push({q:q, correct:isCorrect, userAns: selectedOption || $('blankInput')?.value || ''});
+  if(isCorrect) state.score++;
+
+  // Show note (blank type handles its own note display)
+  if(q.type !== 'blank'){
+    const qNote = $('qNote');
+    qNote.textContent = q.note || '';
+    qNote.style.display = 'block';
+    qNote.classList.add('show');
+  }
+
+  // Track weakness
+  if(!isCorrect && q.id){
+    if(!state.wrongIds.includes(q.id)) state.wrongIds.push(q.id);
+  }
+
+  // Buttons
+  $('confirmBtn').style.display = 'none';
+  $('nextBtn').style.display = 'inline-block';
+  $('stageScore').textContent = `${state.score} / ${state.currentIndex+1}`;
+}
+
+function nextQuestion(){
+  state.currentIndex++;
+  selectedOption = null;
+  // Remove any extra answer divs from blank mode
+  const extra = $('blankArea').querySelectorAll('div');
+  extra.forEach(e => e.remove());
+  renderQuestion();
+}
+
+// ===================================================================
+// RESULTS
+// ===================================================================
+function showResults(){
+  stopTimer();
+  const total = state.questions.length;
+  const correct = state.score;
+  const wrong = total - correct;
+  const pct = total > 0 ? Math.round((correct/total)*100) : 0;
+
+  $('quizArea').style.display = 'none';
+  $('flashcardArea').style.display = 'none';
+  $('resultArea').style.display = 'block';
+  $('progressFill').style.width = '100%';
+
+  $('finalScore').textContent = `${correct} / ${total}`;
+  $('sCorrect').textContent = correct;
+  $('sWrong').textContent = wrong;
+
+  // Stars
+  let stars = '⭐'.repeat(Math.min(5, Math.floor(pct/20) + 1));
+  $('resultStars').textContent = stars;
+
+  // Message
+  let msg = '';
+  if(pct >= 90) msg = '🎉 太強了！你已經完全準備好了！';
+  else if(pct >= 70) msg = '👍 表現不錯！再複習一下錯題會更穩！';
+  else if(pct >= 50) msg = '💪 還有進步空間，建議再刷一遍！';
+  else msg = '📚 需要加強基礎，建議先看重點整理再挑戰！';
+  $('resultMsg').textContent = msg;
+
+  // Full answer review with explanations
+  const wl = $('wrongList');
+  wl.innerHTML = '';
+  let allHtml = '<div style="font-size:14px;font-weight:600;margin-bottom:8px">📋 全部題目詳解：</div>';
+  for(const a of state.answers){
+    const isCorrect = a.correct;
+    const q = a.q;
+    allHtml += `<div class="wrong-item" style="${isCorrect ? 'border-left:3px solid #6B8F71' : 'border-left:3px solid #C4877A'}">
+      <div class="wi-q">${q.q}</div>
+      <div class="wi-a">${isCorrect ? '✅ 正確' : '❌ 錯誤'}　答案：${q.ans}${q.opts ? ') ' + q.opts[q.ans.charCodeAt(0)-65]?.substring(2) : ''}</div>
+      <div style="font-size:12px;color:#666;margin-top:4px;background:#FAF9F7;padding:8px;border-radius:6px">💡 ${q.note || '無解析'}</div>
+    </div>`;
+  }
+  wl.innerHTML = allHtml;
+
+  // Topic breakdown
+  const tc = $('topicContainer');
+  tc.innerHTML = '';
+  const topicMap = {};
+  for(const a of state.answers){
+    const t = a.q.topic || '其他';
+    if(!topicMap[t]) topicMap[t] = {correct:0,total:0};
+    topicMap[t].total++;
+    if(a.correct) topicMap[t].correct++;
+  }
+  const topics = Object.keys(topicMap).sort();
+  if(topics.length > 1){
+    $('topicBreakdown').style.display = 'block';
+    let th = '';
+    for(const t of topics){
+      const d = topicMap[t];
+      const p = d.total > 0 ? Math.round(d.correct/d.total*100) : 0;
+      const barColor = p >= 70 ? '#6B8F71' : p >= 50 ? '#C4A07A' : '#C4877A';
+      const cls = p >= 70 ? 'topic-mastered' : 'topic-needs-work';
+      th += `<div class="topic-row">
+        <span class="tr-name">${t}</span>
+        <div class="tr-bar"><div class="tr-fill" style="width:${p}%;background:${barColor}"></div></div>
+        <span class="tr-score ${cls}">${d.correct}/${d.total}</span>
+      </div>`;
+    }
+    tc.innerHTML = th;
+
+    // Weakness analysis + recommendations
+    const weakTopics = topics.filter(t => topicMap[t].correct/topicMap[t].total < 0.6);
+    if(weakTopics.length > 0){
+      let recHtml = `<div style="margin-top:10px;padding:10px;background:#FAF9F7;border-radius:8px;border-left:3px solid #C4A07A;font-size:13px">
+        <strong>🔍 弱點分析：</strong>建議優先加強「${weakTopics.join('、')}」主題，可參閱重點整理與速記卡！</div>`;
+      tc.innerHTML += recHtml;
+    }
+  }
+
+  // Save stage completion
+  const sc = state.currentStage;
+  if(sc >= 0 && sc <= 5 && correct > state.stageScores[sc][0]){
+    state.stageScores[sc] = [correct, total];
+    if(pct >= 60) state.stageCompleted[sc] = true;
+    saveProgress();
+  }
+
+  // Timer done
+  $('stageScore').textContent = `${correct} / ${total}`;
+}
+
+function retryStage(){
+  state.retryMode = true;
+  state.answers = [];
+  state.score = 0;
+  state.currentIndex = 0;
+  state.isConfirmed = false;
+  selectedOption = null;
+  $('resultArea').style.display = 'none';
+  $('quizArea').style.display = 'block';
+  $('actionBtns').style.display = 'flex';
+  startTimer();
+  renderQuestion();
+}
+
+function endStage(){
+  if(!confirm('確定要離開當前關卡嗎？（進度不會儲存）')) return;
+  stopTimer();
+  state.questions = [];
+  state.answers = [];
+  state.score = 0;
+  state.currentIndex = 0;
+  state.isConfirmed = false;
+  selectedOption = null;
+  backToMenu();
+}
+
+// ===================================================================
+// ESSAY PRACTICE (手寫題練習)
+// ===================================================================
+function startEssayPractice(){
+  state.currentStage = -1;
+  state.currentMode = "essay";
+  state.questions = shuffle([...ESSAY_Q]);
+  state.currentIndex = 0;
+  state.score = 0;
+  state.total = state.questions.length;
+  state.answers = [];
+  $('mainMenu').classList.remove('active');
+  $('gameScreen').classList.add('active');
+  $('quizArea').style.display = 'none';
+  $('flashcardArea').style.display = 'none';
+  $('resultArea').style.display = 'none';
+  $('essayArea').style.display = 'block';
+  $('stageTitle').textContent = '✍️ 手寫題練習';
+  $('essayTopic').style.display = 'inline-block';
+  $('essayTopic').textContent = '';
+  $('essayShowBtn').textContent = '📖 送出並批改';
+  $('essayShowBtn').className = 'essay-submit';
+  $('essayShowBtn').onclick = submitAndShowAnswer;
+  $('essayShowBtn').disabled = false;
+  $('essaySelfRate').style.display = 'none';
+  $('essayAnswer').className = 'essay-answer';
+  $('essayAnswer').style.display = 'none';
+  $('essayAnswer').classList.remove('show');
+  $('essayNextBtn').style.display = 'none';
+  $('essayScore').style.display = 'none';
+  $('essayPrompt').style.display = 'block';
+  $('essayHint').style.display = 'block';
+  $('essayTextarea').style.display = 'block';
+  $('essayBtns').style.display = 'flex';
+  startTimer();
+  renderEssay();
+}
+
+function renderEssay(){
+  if(state.currentIndex >= state.questions.length){
+    stopTimer();
+    $('essayArea').style.display = 'none';
+    $('resultArea').style.display = 'block';
+    $('progressFill').style.width = '100%';
+    showEssayResults();
+    return;
+  }
+  const q = state.questions[state.currentIndex];
+  $('progressFill').style.width = `${(state.currentIndex/state.total)*100}%`;
+  $('stageScore').textContent = `${state.score} / ${state.currentIndex}`;
+  $('essayTopic').textContent = q.topic || '';
+  $('essayPrompt').textContent = `${state.currentIndex+1}. ${q.q}`;
+  $('essayHint').textContent = q.hint ? '💡 提示：'+q.hint : '';
+  $('essayTextarea').value = '';
+  $('essayAnswer').textContent = q.modelAnswer || '';
+  $('essayAnswer').className = 'essay-answer';
+  $('essayAnswer').style.display = 'none';
+  $('essayAnswer').classList.remove('show');
+  $('essaySelfRate').style.display = 'none';
+  $('essayShowBtn').textContent = '📖 送出並批改';
+  $('essayShowBtn').className = 'essay-submit';
+  $('essayShowBtn').style.display = 'inline-block';
+  $('essayShowBtn').disabled = false;
+  $('essayNextBtn').style.display = 'none';
+  $('essayScore').style.display = 'none';
+  $('timerDisplay').style.display = 'block';
+}
+
+function submitAndShowAnswer(){
+  const answer = $('essayAnswer');
+  const btn = $('essayShowBtn');
+  answer.classList.add('show');
+  answer.style.display = 'block';
+  btn.textContent = '✅ 已送出';
+  btn.disabled = true;
+  $('essaySelfRate').style.display = 'flex';
+}
+
+function essaySelfAssess(gotIt){
+  state.answers.push({q:state.questions[state.currentIndex], correct:gotIt});
+  if(gotIt) state.score++;
+  $('essaySelfRate').style.display = 'none';
+  $('essayShowBtn').style.display = 'none';
+  $('essayNextBtn').style.display = 'inline-block';
+  $('essayScore').style.display = 'block';
+  $('essayScore').textContent = `✅ 自評：${gotIt?'我會了 ✓':'需要複習'} | 累計 ${state.score} / ${state.currentIndex+1}`;
+  $('stageScore').textContent = `${state.score} / ${state.currentIndex+1}`;
+}
+
+function nextEssay(){
+  state.currentIndex++;
+  renderEssay();
+}
+
+function showEssayResults(){
+  const total = state.questions.length;
+  const correct = state.score;
+  const wrong = total - correct;
+  const pct = total>0 ? Math.round(correct/total*100) : 0;
+  $('finalScore').textContent = `${correct} / ${total}`;
+  $('sCorrect').textContent = correct;
+  $('sWrong').textContent = wrong;
+  let stars = '⭐'.repeat(Math.min(5, Math.floor(pct/20)+1));
+  $('resultStars').textContent = stars;
+  let msg = '';
+  if(pct>=80) msg = '🎉 手寫題練習完成！考試遇到類似題目沒問題了！';
+  else if(pct>=50) msg = '👍 不錯！建議對不會的題目再看一次詳解！';
+  else msg = '📚 建議仔細閱讀每題詳解，理解後再練習一次！';
+  $('resultMsg').textContent = msg;
+  $('topicBreakdown').style.display = 'none';
+  // Show all essay review
+  const wl = $('wrongList');
+  wl.innerHTML = '';
+  let html = '<div style="font-size:14px;font-weight:600;margin-bottom:8px">📋 全部題目詳解：</div>';
+  for(const a of state.answers){
+    const q = a.q;
+    html += `<div class="wrong-item" style="${a.correct ? 'border-left:3px solid #6B8F71' : 'border-left:3px solid #C4877A'}">
+      <div class="wi-q">${q.q}</div>
+      <div style="font-size:12px;margin-top:4px"><b>參考答案：</b>${q.modelAnswer || '無'}</div>
+      <div style="font-size:12px;color:#666;margin-top:4px;background:#FAF9F7;padding:8px;border-radius:6px">💡 ${q.note || '無解析'}</div>
+      <div style="margin-top:2px;font-size:11px;color:${a.correct ? '#6B8F71' : '#C4877A'}">${a.correct ? '✅ 我會了' : '🔄 需要複習'}</div>
+    </div>`;
+  }
+  wl.innerHTML = html;
+  $('stageScore').textContent = `${correct} / ${total}`;
+}
+
+// ===================================================================
+// TIMER
+// ===================================================================
+function startTimer(){
+  stopTimer();
+  state.seconds = 0;
+  const t = $('timerDisplay');
+  t.style.display = 'block';
+  state.timerInterval = setInterval(() => {
+    state.seconds++;
+    const m = String(Math.floor(state.seconds/60)).padStart(2,'0');
+    const s = String(state.seconds%60).padStart(2,'0');
+    t.textContent = `⏱ ${m}:${s}`;
+  }, 1000);
+}
+
+function stopTimer(){
+  if(state.timerInterval){
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
+}
+
+// ===================================================================
+// CHEAT SHEET
+// ===================================================================
+function showCheatSheet(){
+  const modal = $('cheatModal');
+  modal.classList.add('active');
+  const content = $('cheatContent');
+  const items = [
+    {label:"LD₅₀ 分級", value:"<1 極毒｜1-50 高毒｜50-500 中毒｜500-5K 低毒｜>5K 相對無害"},
+    {label:"ADI公式", value:"ADI = NOAEL / 100"},
+    {label:"每日上限", value:"ADI × 體重(kg)"},
+    {label:"暴露評估", value:"TMDI → EDI → 風險管理"},
+    {label:"生成溫度", value:"Acrylamide >120℃｜HCAs >150℃｜PAHs >400℃"},
+    {label:"法規標準", value:"3-MCPD(醬油) ≤0.4ppm｜反式標示0 <0.5g/份"},
+    {label:"甜味劑甜度", value:"糖精500× > 阿斯巴甜200× > 甜精30×"},
+    {label:"HLB值", value:"<4 W/O｜>10 O/W｜大豆卵磷脂=8"},
+    {label:"六大選用原則", value:"安全無害、純淨、必要性、不破壞營養、消費者接受度、符合法規"},
+    {label:"毒性試驗順序", value:"急性(單次) → 亞急性(28天) → 亞慢性(90天) → 慢性(2年)"},
+    {label:"安全係數", value:"SF = 100（種間10 × 種內10）"},
+    {label:"IARC分級", value:"Group 1 確定｜2A 很可能｜2B 可能"},
+    {label:"Paracelsus", value:"「The dose makes the poison.」"},
+    {label:"食安事件", value:"2008三聚氰胺｜2011塑化劑(DEHP)｜2013順丁烯二酸｜2014劣質豬油｜2024米酵菌酸"},
+    {label:"必背英文", value:"ADI=每日容許攝取量｜NOAEL=無可見有害作用劑量｜LD₅₀=半數致死劑量｜BaP=苯並[a]芘"},
+    {label:"重要數字", value:"蛋白質換算係數 6.25｜KOH分子量 56.1｜油脂皂化值計算用"},
+];
+
+  let html = '';
+  for(const item of items){
+    html += `<div class="cheat-item"><span class="ci-label">${item.label}：</span>${item.value}</div>`;
+  }
+  content.innerHTML = html;
+}
+
+function closeCheatSheet(){
+  $('cheatModal').classList.remove('active');
+}
+
+// Close modal on background click
+document.getElementById('cheatModal').addEventListener('click', function(e){
+  if(e.target === this) closeCheatSheet();
+});
+
+// ===================================================================
+// RESET
+// ===================================================================
+function resetAll(){
+  if(!confirm('確定要重設所有進度嗎？（錯題記錄也會清除）')) return;
+  state.stageCompleted = [false,false,false,false,false,false];
+  state.stageScores = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]];
+  state.wrongIds = [];
+  saveProgress();
+  updateMenu();
+}
+
+// ===================================================================
+// INIT
+// ===================================================================
+loadProgress();
+updateMenu();
+
+// Keyboard shortcuts: 1-4 select option, Enter confirm, Space/→ next
+document.addEventListener('keydown', function(e){
+  const mode = state.currentMode;
+  if(mode === 'essay'){
+    const showBtn = $('essayShowBtn');
+    const nextBtn = $('essayNextBtn');
+    if(e.key === 'Enter' && !e.ctrlKey && !e.shiftKey && showBtn.style.display !== 'none' && !showBtn.disabled){
+      e.preventDefault();
+      submitAndShowAnswer();
+      return;
+    }
+    if((e.key === 'Enter' || e.key === 'ArrowRight' || e.key === ' ') && nextBtn.style.display !== 'none'){
+      e.preventDefault();
+      nextEssay();
+    }
+    return;
+  }
+  if(mode !== 'quiz') return;
+  const q = state.questions[state.currentIndex];
+  if(!q) return;
+
+  if(q.type === 'blank'){
+    if(e.key === 'Enter' && !state.isConfirmed) { e.preventDefault(); checkBlank(); }
+    else if((e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight') && state.isConfirmed){
+      e.preventDefault(); nextQuestion();
+    }
+    return;
+  }
+
+  // MCQ mode
+  if(e.key >= '1' && e.key <= '4' && !state.isConfirmed){
+    const opts = document.querySelectorAll('.option');
+    if(opts[e.key-1]) selectOption(opts[e.key-1], String.fromCharCode(64 + parseInt(e.key)));
+    return;
+  }
+  if((e.key === 'Enter' || e.key === ' ') && !state.isConfirmed && selectedOption){
+    e.preventDefault();
+    confirmAnswer();
+    return;
+  }
+  if((e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight') && state.isConfirmed){
+    e.preventDefault();
+    nextQuestion();
+    return;
+  }
+});
+
+console.log('🍽️ 食品衛生與安全 期末衝刺總複習已啟動！');
+console.log('祝考試順利！');
+</script>
+</body>
+</html>

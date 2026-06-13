@@ -1,4 +1,14 @@
-# 作業 01 ~ 07 說明
+欄位 | 內容
+-----|--------
+學期 | 114 學年下學期
+學生 |  施宇柔
+學號 | 111210317
+教師 | [陳鍾誠](https://www.nqu.edu.tw/educsie/index.php?act=blog&code=list&ids=4)
+學校科系 | [金門大學資訊工程系](https://www.nqu.edu.tw/educsie/index.php)
+課程教材 | https://github.com/ccc114b/html2server <br/> https://www.w3schools.com/
+
+# 期末報告：作業 01 ~ 07 說明
+# 課程：網頁設計 -- 筆記、習題與報告
 
 ## 作業 01 — 個人網頁（`01/me.html`）
 以「施宇柔」（學號 111210317）為主題的個人資訊卡片，包含大頭貼、姓名、學號、Email，具有懸浮動畫（`hover` 上移）與圓角卡片設計，採用簡潔的藍白配色風格，並附「寄信給我」按鈕。
